@@ -24,7 +24,6 @@ export function AuthPage() {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
   } = useForm<LoginInput | RegisterInput>({
     resolver: zodResolver(isLogin ? loginSchema : registerSchema),
   })
@@ -39,9 +38,13 @@ export function AuthPage() {
 
   const registerMutation = useMutation({
     mutationFn: authService.register,
-    onSuccess: (data) => {
-      setAuth(data.user, data.token)
-      navigate('/my-lists')
+    onSuccess: async (_, variables) => {
+      // Após registro bem-sucedido, fazer login automaticamente
+      const registerData = variables as RegisterInput
+      loginMutation.mutate({
+        email: registerData.email,
+        password: registerData.password,
+      })
     },
   })
 

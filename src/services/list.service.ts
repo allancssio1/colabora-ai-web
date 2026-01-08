@@ -1,13 +1,16 @@
 import { api } from '../lib/api'
 import type { List, PublicList } from '../types'
-import type { CreateListInput, EditListInput, RegisterMemberInput } from '../schemas/list.schema'
+import type {
+  CreateListInput,
+  EditListInput,
+  RegisterMemberInput,
+} from '../schemas/list.schema'
 
 export const listService = {
   async getLists(): Promise<List[]> {
-    const response = await api.get<List[]>('/lists')
-    return response.data
+    const response = await api.get<{ lists: List[] }>('/lists')
+    return response.data.lists // Extrai o array de dentro do objeto
   },
-
   async getListById(id: string): Promise<List> {
     const response = await api.get<List>(`/lists/${id}`)
     return response.data

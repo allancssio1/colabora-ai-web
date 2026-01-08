@@ -36,10 +36,10 @@ export function EditListPage() {
           event_date: list.event_date,
           mode,
           items: list.items.map((item) => ({
-            name: item.name,
-            total_quantity: item.total_quantity,
-            unit: item.unit as any,
-            quantity_per_member: item.quantity_per_member,
+            item_name: item.item_name,
+            quantity_total: item.quantity_total,
+            unit_type: item.unit_type as any,
+            quantity_per_portion: item.quantity_per_portion,
           })),
         }
       : undefined,
@@ -93,7 +93,7 @@ export function EditListPage() {
         </div>
 
         <div className="flex flex-col gap-2 mb-8">
-          <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-tight">
+          <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-tight text-primary">
             Editar Lista de Contribuição
           </h1>
           <p className="text-muted-foreground text-base">
@@ -105,13 +105,13 @@ export function EditListPage() {
           <Card className="overflow-hidden">
             <div className="p-6 md:p-8 space-y-8">
               <div>
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                  <Edit className="h-5 w-5 text-primary" />
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-primary">
+                  <Edit className="h-5 w-5" />
                   Informações Gerais
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="location">Nome do Evento</Label>
+                    <Label htmlFor="location" className="text-primary font-semibold">Nome do Evento</Label>
                     <Input
                       id="location"
                       placeholder="Ex: Café da Manhã da Equipe"
@@ -122,7 +122,7 @@ export function EditListPage() {
                     )}
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="event_date">Data do Evento</Label>
+                    <Label htmlFor="event_date" className="text-primary font-semibold">Data do Evento</Label>
                     <Input id="event_date" type="datetime-local" {...register('event_date')} />
                     {errors.event_date && (
                       <p className="text-sm text-destructive">{errors.event_date.message}</p>
@@ -130,7 +130,7 @@ export function EditListPage() {
                   </div>
                 </div>
                 <div className="space-y-2 mt-6">
-                  <Label htmlFor="description">Descrição / Observações</Label>
+                  <Label htmlFor="description" className="text-primary font-semibold">Descrição / Observações</Label>
                   <Textarea
                     id="description"
                     placeholder="Trazer bebidas de preferência. O local possui geladeira."
@@ -146,8 +146,8 @@ export function EditListPage() {
               <hr className="border-border" />
 
               <div>
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                  <RefreshCw className="h-5 w-5 text-primary" />
+                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-primary">
+                  <RefreshCw className="h-5 w-5" />
                   Ação da Lista
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -176,7 +176,7 @@ export function EditListPage() {
                       >
                         <Edit className="h-5 w-5" />
                       </div>
-                      <span className="font-bold">Continuar lista existente</span>
+                      <span className="font-bold text-primary">Continuar lista existente</span>
                     </div>
                     <p className="text-sm text-muted-foreground pl-[52px]">
                       Mantém todos os participantes, itens e histórico atual. Ideal para correções e
@@ -209,7 +209,7 @@ export function EditListPage() {
                       >
                         <RefreshCw className="h-5 w-5" />
                       </div>
-                      <span className="font-bold">Criar nova lista (Resetar)</span>
+                      <span className="font-bold text-primary">Criar nova lista (Resetar)</span>
                     </div>
                     <p className="text-sm text-muted-foreground pl-[52px]">
                       Inicia um novo ciclo. Todos os dados atuais serão arquivados e a contagem reiniciada.

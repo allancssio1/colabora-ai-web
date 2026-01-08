@@ -1,10 +1,10 @@
 import { z } from 'zod/v4'
 
 export const itemSchema = z.object({
-  name: z.string().min(1, 'Nome do item é obrigatório'),
-  total_quantity: z.number().min(1, 'Quantidade total deve ser maior que 0'),
-  unit: z.enum(['kg', 'g', 'unidade(s)', 'litro(s)', 'ml', 'metro(s)', 'pacote(s)', 'lata(s)', 'garrafa(s)']),
-  quantity_per_member: z.number().min(1, 'Quantidade por membro deve ser maior que 0'),
+  item_name: z.string().min(1, 'Nome do item é obrigatório'),
+  quantity_total: z.number().min(1, 'Quantidade total deve ser maior que 0'),
+  unit_type: z.enum(['kg', 'g', 'unidade(s)', 'litro(s)', 'ml', 'metro(s)', 'pacote(s)', 'lata(s)', 'garrafa(s)']),
+  quantity_per_portion: z.number().min(1, 'Quantidade por membro deve ser maior que 0'),
 })
 
 export const createListSchema = z.object({

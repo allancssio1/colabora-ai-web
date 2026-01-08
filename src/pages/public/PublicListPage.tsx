@@ -125,7 +125,7 @@ export function PublicListPage() {
                       {canRegister ? 'Lista Aberta' : 'Lista Encerrada'}
                     </span>
                   </div>
-                  <h1 className="text-3xl font-bold tracking-tight">{list.location}</h1>
+                  <h1 className="text-3xl font-bold tracking-tight text-primary">{list.location}</h1>
                   <p className="text-sm text-muted-foreground">
                     Confira os detalhes e contribua com o evento.
                   </p>
@@ -170,7 +170,7 @@ export function PublicListPage() {
               <Card className="p-6">
                 <div className="flex items-center gap-2 mb-6">
                   <User className="h-5 w-5 text-primary" />
-                  <h3 className="text-lg font-bold leading-tight">Seus Dados</h3>
+                  <h3 className="text-lg font-bold leading-tight text-primary">Seus Dados</h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
@@ -225,7 +225,7 @@ export function PublicListPage() {
             <Card className="overflow-hidden">
               <div className="px-6 py-4 border-b flex items-center justify-between bg-muted/50">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-bold leading-tight">Itens da Lista</h3>
+                  <h3 className="text-lg font-bold leading-tight text-primary">Itens da Lista</h3>
                 </div>
                 <span className="text-sm text-muted-foreground">
                   {list.items.filter((i) => !i.member_name).length} de {list.items.length} itens disponíveis
@@ -257,7 +257,7 @@ export function PublicListPage() {
                           item.member_name ? 'line-through text-muted-foreground' : ''
                         }`}
                       >
-                        {item.quantity_per_member} {item.unit} de {item.name}
+                        {item.quantity_per_portion} {item.unit_type} de {item.item_name}
                       </p>
                     </div>
                   </div>

@@ -50,7 +50,9 @@ export function MyListsPage() {
 
   const formatDate = (dateString: string) => {
     try {
-      return format(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
+      return format(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", {
+        locale: ptBR,
+      })
     } catch {
       return dateString
     }
@@ -58,10 +60,8 @@ export function MyListsPage() {
 
   const filteredLists = lists?.filter((list) => {
     if (filter === 'all') return true
-    if (filter === 'active') return list.status === 'active'
-    if (filter === 'archived') return list.status === 'archived'
-    return true
-  })
+    return list.status === filter
+  }) ?? []
 
   return (
     <div className="min-h-screen bg-background">
@@ -70,7 +70,7 @@ export function MyListsPage() {
       <main className="container max-w-7xl mx-auto px-4 md:px-8 py-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <div className="flex flex-col gap-2">
-            <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-tight text-primary">
               Minhas Listas
             </h1>
             <p className="text-base text-muted-foreground">
@@ -154,7 +154,9 @@ export function MyListsPage() {
                 </div>
 
                 <div className="flex-1 mb-4">
-                  <h3 className="text-lg font-bold leading-tight mb-3">{list.location}</h3>
+                  <h3 className="text-lg font-bold leading-tight mb-3 text-primary">
+                    {list.location}
+                  </h3>
                   <div className="flex flex-col gap-2">
                     <p className="text-sm text-muted-foreground flex items-start gap-2">
                       <MapPin className="h-4 w-4 shrink-0 mt-0.5" />
@@ -195,9 +197,11 @@ export function MyListsPage() {
         ) : (
           <div className="text-center py-12">
             <div className="mb-4">
-              <Calendar className="h-16 w-16 mx-auto text-muted-foreground" />
+              <Calendar className="h-16 w-16 mx-auto text-primary" />
             </div>
-            <h3 className="text-lg font-medium mb-2">Nenhuma lista encontrada</h3>
+            <h3 className="text-lg font-medium mb-2 text-primary">
+              Nenhuma lista encontrada
+            </h3>
             <p className="text-muted-foreground mb-4">
               Você ainda não possui listas. Crie a primeira!
             </p>
@@ -217,8 +221,8 @@ export function MyListsPage() {
           <DialogHeader>
             <DialogTitle>Deletar Lista</DialogTitle>
             <DialogDescription>
-              Tem certeza que deseja deletar esta lista? Esta ação não pode ser desfeita e todos os
-              dados serão permanentemente removidos.
+              Tem certeza que deseja deletar esta lista? Esta ação não pode ser
+              desfeita e todos os dados serão permanentemente removidos.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

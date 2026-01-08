@@ -12,10 +12,10 @@ export interface AuthResponse {
 
 export interface ListItem {
   id: string
-  name: string
-  total_quantity: number
-  unit: string
-  quantity_per_member: number
+  item_name: string
+  quantity_total: number
+  unit_type: string
+  quantity_per_portion: number
   member_name: string | null
   member_cpf: string | null
   list_id: string
@@ -44,9 +44,9 @@ export interface PublicList {
 
 export interface PublicListItem {
   id: string
-  name: string
-  quantity_per_member: number
-  unit: string
+  item_name: string
+  quantity_per_portion: number
+  unit_type: string
   member_name: string | null
 }
 

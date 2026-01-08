@@ -61,16 +61,16 @@ export function ListDetailsPage() {
 
   // Group items by name to calculate progress
   const groupedItems = list.items.reduce((acc, item) => {
-    if (!acc[item.name]) {
-      acc[item.name] = {
-        name: item.name,
-        unit: item.unit,
-        quantityPerMember: item.quantity_per_member,
-        totalQuantity: item.total_quantity,
+    if (!acc[item.item_name]) {
+      acc[item.item_name] = {
+        name: item.item_name,
+        unit: item.unit_type,
+        quantityPerMember: item.quantity_per_portion,
+        totalQuantity: item.quantity_total,
         items: [],
       }
     }
-    acc[item.name].items.push(item)
+    acc[item.item_name].items.push(item)
     return acc
   }, {} as Record<string, { name: string; unit: string; quantityPerMember: number; totalQuantity: number; items: typeof list.items }>)
 
@@ -151,7 +151,7 @@ export function ListDetailsPage() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-3xl font-black tracking-tight">{list.location}</h2>
+                  <h2 className="text-3xl font-black tracking-tight text-primary">{list.location}</h2>
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
                       list.status === 'active'
@@ -214,7 +214,7 @@ export function ListDetailsPage() {
           {/* Share Link */}
           <Card className="p-6 flex flex-col justify-center">
             <div className="mb-4">
-              <h3 className="text-lg font-bold mb-1">Compartilhar Lista</h3>
+              <h3 className="text-lg font-bold mb-1 text-primary">Compartilhar Lista</h3>
               <p className="text-sm text-muted-foreground">
                 Envie este link para os convidados contribuírem.
               </p>
@@ -237,7 +237,7 @@ export function ListDetailsPage() {
         <Card className="overflow-hidden">
           <div className="px-6 py-5 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h3 className="text-lg font-bold">Itens Solicitados</h3>
+              <h3 className="text-lg font-bold text-primary">Itens Solicitados</h3>
               <p className="text-sm text-muted-foreground mt-1">
                 Acompanhe o preenchimento das parcelas.
               </p>

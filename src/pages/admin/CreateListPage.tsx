@@ -17,7 +17,7 @@ const UNITS = ['kg', 'g', 'unidade(s)', 'litro(s)', 'ml', 'metro(s)', 'pacote(s)
 export function CreateListPage() {
   const navigate = useNavigate()
   const [newItem, setNewItem] = useState<Partial<ItemInput>>({
-    unit: 'kg',
+    unit_type: 'kg',
   })
 
   const {
@@ -50,13 +50,13 @@ export function CreateListPage() {
 
   const addItem = () => {
     if (
-      newItem.name &&
-      newItem.total_quantity &&
-      newItem.quantity_per_member &&
-      newItem.unit
+      newItem.item_name &&
+      newItem.quantity_total &&
+      newItem.quantity_per_portion &&
+      newItem.unit_type
     ) {
       append(newItem as ItemInput)
-      setNewItem({ unit: 'kg' })
+      setNewItem({ unit_type: 'kg' })
     }
   }
 
@@ -66,8 +66,8 @@ export function CreateListPage() {
   }
 
   const previewParcels =
-    newItem.total_quantity && newItem.quantity_per_member
-      ? calculateParcels(newItem.total_quantity, newItem.quantity_per_member)
+    newItem.quantity_total && newItem.quantity_per_portion
+      ? calculateParcels(newItem.quantity_total, newItem.quantity_per_portion)
       : null
 
   return (
@@ -87,7 +87,7 @@ export function CreateListPage() {
 
         {/* Page Heading */}
         <div className="flex flex-col gap-2 mb-8">
-          <h1 className="text-3xl sm:text-4xl font-black leading-tight tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-black leading-tight tracking-tight text-primary">
             Criar Nova Lista
           </h1>
           <p className="text-muted-foreground text-base max-w-2xl">
@@ -99,16 +99,16 @@ export function CreateListPage() {
           {/* Event Details Section */}
           <Card className="overflow-hidden">
             <div className="border-b bg-muted/50 px-6 py-4">
-              <h2 className="text-lg font-bold flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-bold flex items-center gap-2 text-primary">
+                <MapPin className="h-5 w-5" />
                 Detalhes do Evento
               </h2>
             </div>
             <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="location">Local do evento</Label>
+                <Label htmlFor="location" className="text-primary font-semibold">Local do evento</Label>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
                   <Input
                     id="location"
                     placeholder="Ex: Churrasco na casa do João"
@@ -142,8 +142,8 @@ export function CreateListPage() {
           {/* Items Section */}
           <Card className="overflow-hidden">
             <div className="border-b bg-muted/50 px-6 py-4 flex justify-between items-center">
-              <h2 className="text-lg font-bold flex items-center gap-2">
-                <ShoppingCart className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-bold flex items-center gap-2 text-primary">
+                <ShoppingCart className="h-5 w-5" />
                 Itens para Contribuição
               </h2>
               <span className="text-xs font-medium px-2 py-1 rounded bg-primary/10 text-primary">
@@ -153,7 +153,7 @@ export function CreateListPage() {
 
             {/* Add New Item Form */}
             <div className="p-6 bg-muted/30 border-b">
-              <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground mb-4">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-primary mb-4">
                 Adicionar Novo Item
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 items-start">
@@ -161,8 +161,8 @@ export function CreateListPage() {
                   <label className="text-xs font-medium text-muted-foreground">Nome do item</label>
                   <Input
                     placeholder="Ex: Carne Alcatra"
-                    value={newItem.name || ''}
-                    onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                    value={newItem.item_name || ''}
+                    onChange={(e) => setNewItem({ ...newItem, item_name: e.target.value })}
                   />
                 </div>
 
@@ -171,9 +171,9 @@ export function CreateListPage() {
                   <Input
                     type="number"
                     placeholder="0"
-                    value={newItem.total_quantity || ''}
+                    value={newItem.quantity_total || ''}
                     onChange={(e) =>
-                      setNewItem({ ...newItem, total_quantity: Number(e.target.value) })
+                      setNewItem({ ...newItem, quantity_total: Number(e.target.value) })
                     }
                   />
                 </div>
@@ -182,9 +182,9 @@ export function CreateListPage() {
                   <label className="text-xs font-medium text-muted-foreground">Unidade</label>
                   <select
                     className="flex h-10 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    value={newItem.unit || 'kg'}
+                    value={newItem.unit_type || 'kg'}
                     onChange={(e) =>
-                      setNewItem({ ...newItem, unit: e.target.value as ItemInput['unit'] })
+                      setNewItem({ ...newItem, unit_type: e.target.value as ItemInput['unit_type'] })
                     }
                   >
                     {UNITS.map((unit) => (
@@ -200,9 +200,9 @@ export function CreateListPage() {
                   <Input
                     type="number"
                     placeholder="0"
-                    value={newItem.quantity_per_member || ''}
+                    value={newItem.quantity_per_portion || ''}
                     onChange={(e) =>
-                      setNewItem({ ...newItem, quantity_per_member: Number(e.target.value) })
+                      setNewItem({ ...newItem, quantity_per_portion: Number(e.target.value) })
                     }
                   />
                 </div>
@@ -229,7 +229,7 @@ export function CreateListPage() {
                     <p className="text-sm text-muted-foreground">
                       Isso gerará <strong className="text-primary">{previewParcels} parcelas</strong> de{' '}
                       <strong className="text-primary">
-                        {newItem.quantity_per_member} {newItem.unit}
+                        {newItem.quantity_per_portion} {newItem.unit_type}
                       </strong>
                     </p>
                   ) : (
@@ -256,23 +256,23 @@ export function CreateListPage() {
                   </thead>
                   <tbody className="divide-y">
                     {fields.map((field, index) => {
-                      const parcels = calculateParcels(field.total_quantity, field.quantity_per_member)
+                      const parcels = calculateParcels(field.quantity_total, field.quantity_per_portion)
                       return (
                         <tr key={field.id} className="hover:bg-muted/50 transition-colors">
-                          <td className="px-6 py-4 font-medium">{field.name}</td>
+                          <td className="px-6 py-4 font-medium">{field.item_name}</td>
                           <td className="px-6 py-4 text-center">
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted">
-                              {field.total_quantity} {field.unit}
+                              {field.quantity_total} {field.unit_type}
                             </span>
                           </td>
                           <td className="px-6 py-4 text-center text-muted-foreground">
-                            {field.quantity_per_member} {field.unit}
+                            {field.quantity_per_portion} {field.unit_type}
                           </td>
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-2 text-muted-foreground">
                               <PieChart className="h-4 w-4 text-primary" />
                               <span>
-                                {parcels} parcelas de {field.quantity_per_member} {field.unit}
+                                {parcels} parcelas de {field.quantity_per_portion} {field.unit_type}
                               </span>
                             </div>
                           </td>
@@ -296,9 +296,9 @@ export function CreateListPage() {
             ) : (
               <div className="p-12 flex flex-col items-center justify-center text-center">
                 <div className="size-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                  <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+                  <ShoppingCart className="h-8 w-8 text-primary" />
                 </div>
-                <h3 className="text-lg font-medium mb-1">Sua lista está vazia</h3>
+                <h3 className="text-lg font-medium mb-1 text-primary">Sua lista está vazia</h3>
                 <p className="text-muted-foreground">Adicione o primeiro item usando o formulário acima.</p>
               </div>
             )}
