@@ -14,15 +14,28 @@ import {
   Users,
   ShoppingCart,
   Activity,
+  ListChecks,
+  Download,
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { useState } from 'react'
 import { cn } from '../../lib/utils'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from '../../components/ui/dialog'
+import { maskCPF } from '../../utils/masks'
 
 export function ListDetailsPage() {
   const { id } = useParams<{ id: string }>()
   const [copied, setCopied] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const { data: list, isLoading } = useQuery({
     queryKey: ['list', id],
@@ -46,6 +59,14 @@ export function ListDetailsPage() {
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
+
+  const handleDownloadList = () => {
+    // TODO: Implementar download em DOCX ou PDF
+    console.log('Download da lista será implementado futuramente')
+  }
+
+  // Itens preenchidos (com membro)
+  const filledItems = list?.items.filter((item) => item.member_name) || []
 
   if (isLoading) {
     return (
@@ -186,7 +207,7 @@ export function ListDetailsPage() {
                     className={cn(
                       `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
                         list.status === 'active'
-                          ? 'bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800'
+                          ? 'bg-green-100 text-green-900 dark:bg-green-900/30 dark:text-green-400 border-green-300 dark:border-green-800'
                           : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
                       }`,
                     )}
@@ -299,6 +320,80 @@ export function ListDetailsPage() {
                 Acompanhe o preenchimento das parcelas.
               </p>
             </div>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <ListChecks className="h-4 w-4 mr-2" />
+                  Ver Preenchidos
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Itens Preenchidos</DialogTitle>
+                  <DialogDescription>
+                    {filledItems.length === 0
+                      ? 'Nenhum item foi preenchido ainda.'
+                      : `${filledItems.length} ${
+                          filledItems.length === 1
+                            ? 'item preenchido'
+                            : 'itens preenchidos'
+                        }`}
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="space-y-4 mt-4">
+                  {filledItems.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <p>Nenhum membro assumiu um item ainda.</p>
+                    </div>
+                  ) : (
+                    filledItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-start justify-between p-4 border rounded-lg bg-muted/20"
+                      >
+                        <div className="flex items-center justify-center gap-3 flex-1">
+                          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+                            <CheckCircle2 className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex justify-around items-center gap-1 flex-1">
+                            <p className="font-semibold text-base">
+                              {item.quantity_per_portion} {item.unit_type} de{' '}
+                              {item.item_name}
+                            </p>
+                            <div className="flex gap-0.5">
+                              <p className="text-sm text-muted-foreground">
+                                <span className="font-medium text-foreground">
+                                  Nome:
+                                </span>{' '}
+                                {item.member_name}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                <span className="font-medium text-foreground">
+                                  CPF:
+                                </span>{' '}
+                                {maskCPF(item.member_cpf || '')}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+
+                <DialogFooter className="mt-6">
+                  <Button
+                    variant="outline"
+                    onClick={handleDownloadList}
+                    disabled={filledItems.length === 0}
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Baixar Lista
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
 
           <div className="overflow-x-auto">
