@@ -17,7 +17,7 @@ export const listService = {
   },
 
   async getPublicList(id: string): Promise<PublicList> {
-    const response = await api.get<PublicList>(`/lists/public/${id}`)
+    const response = await api.get<PublicList>(`/lists/${id}`)
     return response.data
   },
 
@@ -35,7 +35,12 @@ export const listService = {
     await api.delete(`/lists/${id}`)
   },
 
-  async registerMember(data: RegisterMemberInput): Promise<void> {
-    await api.post(`/lists/register-member`, data)
+  async registerMember(data: RegisterMemberInput & { listId: string }): Promise<void> {
+    const { listId, ...body } = data
+    await api.post(`/lists/${listId}/register`, body)
+  },
+
+  async unregisterMember(listId: string, itemId: string): Promise<void> {
+    await api.delete(`/lists/${listId}/items/${itemId}/register`)
   },
 }

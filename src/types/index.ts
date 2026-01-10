@@ -48,6 +48,7 @@ export interface PublicListItem {
   quantity_per_portion: number
   unit_type: string
   member_name: string | null
+  member_cpf: string | null
 }
 
 export interface ApiError {

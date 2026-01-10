@@ -4,6 +4,7 @@ import { LogOut, Search } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { AppLogo } from '../ui/app-logo'
+import { ThemeToggle } from '../ui/theme-toggle'
 
 export function Header() {
   const user = useAuthStore((state) => state.user)
@@ -46,6 +47,7 @@ export function Header() {
             <p className="text-sm font-medium">{user?.name}</p>
             <p className="text-xs text-muted-foreground">{user?.email}</p>
           </div>
+          <ThemeToggle />
           <Button variant="ghost" size="icon" onClick={handleLogout} title="Sair">
             <LogOut className="h-5 w-5" />
           </Button>

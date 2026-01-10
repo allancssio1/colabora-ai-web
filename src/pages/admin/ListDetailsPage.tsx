@@ -4,10 +4,21 @@ import { listService } from '../../services/list.service'
 import { Header } from '../../components/layout/Header'
 import { Button } from '../../components/ui/button'
 import { Card } from '../../components/ui/card'
-import { MapPin, Calendar, Eye, Edit, Copy, CheckCircle2, Users, ShoppingCart, Activity } from 'lucide-react'
+import {
+  MapPin,
+  Calendar,
+  Eye,
+  Edit,
+  Copy,
+  CheckCircle2,
+  Users,
+  ShoppingCart,
+  Activity,
+} from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { useState } from 'react'
+import { cn } from '../../lib/utils'
 
 export function ListDetailsPage() {
   const { id } = useParams<{ id: string }>()
@@ -21,7 +32,9 @@ export function ListDetailsPage() {
 
   const formatDate = (dateString: string) => {
     try {
-      return format(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })
+      return format(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", {
+        locale: ptBR,
+      })
     } catch {
       return dateString
     }
@@ -57,7 +70,11 @@ export function ListDetailsPage() {
   }
 
   const itemsWithMembers = list.items.filter((item) => item.member_name)
-  const totalParticipants = new Set(list.items.filter((item) => item.member_name).map((item) => item.member_cpf)).size
+  const totalParticipants = new Set(
+    list.items
+      .filter((item) => item.member_name)
+      .map((item) => item.member_cpf),
+  ).size
 
   // Group items by name to calculate progress
   const groupedItems = list.items.reduce((acc, item) => {
@@ -82,7 +99,9 @@ export function ListDetailsPage() {
     totalParcels: group.items.length,
     filled: group.items.filter((i) => i.member_name).length,
     available: group.items.filter((i) => !i.member_name).length,
-    progress: (group.items.filter((i) => i.member_name).length / group.items.length) * 100,
+    progress:
+      (group.items.filter((i) => i.member_name).length / group.items.length) *
+      100,
   }))
 
   return (
@@ -94,7 +113,10 @@ export function ListDetailsPage() {
         <nav className="flex mb-6 text-sm font-medium text-muted-foreground">
           <ol className="flex items-center space-x-2">
             <li>
-              <Link to="/my-lists" className="hover:text-primary transition-colors">
+              <Link
+                to="/my-lists"
+                className="hover:text-primary transition-colors"
+              >
                 Minhas Listas
               </Link>
             </li>
@@ -113,7 +135,9 @@ export function ListDetailsPage() {
                 <Activity className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Status Atual</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Status Atual
+                </p>
                 <p className="text-xl font-bold">
                   {list.status === 'active' ? 'Ativa' : 'Arquivada'}
                 </p>
@@ -126,7 +150,9 @@ export function ListDetailsPage() {
                 <Users className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Participantes</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Participantes
+                </p>
                 <p className="text-xl font-bold">{totalParticipants}</p>
               </div>
             </div>
@@ -137,7 +163,9 @@ export function ListDetailsPage() {
                 <ShoppingCart className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Itens Cadastrados</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Itens Cadastrados
+                </p>
                 <p className="text-xl font-bold">{list.items.length}</p>
               </div>
             </div>
@@ -151,13 +179,17 @@ export function ListDetailsPage() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-3xl font-black tracking-tight text-primary">{list.location}</h2>
+                  <h2 className="text-3xl font-black tracking-tight text-primary">
+                    {list.location}
+                  </h2>
                   <span
-                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                      list.status === 'active'
-                        ? 'bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800'
-                        : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
-                    }`}
+                    className={cn(
+                      `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                        list.status === 'active'
+                          ? 'bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-400 border-green-200 dark:border-green-800'
+                          : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                      }`,
+                    )}
                   >
                     {list.status === 'active' ? (
                       <>
@@ -170,12 +202,17 @@ export function ListDetailsPage() {
                   </span>
                 </div>
                 <p className="text-muted-foreground">
-                  Gerencie os itens e acompanhe as contribuições para este evento.
+                  Gerencie os itens e acompanhe as contribuições para este
+                  evento.
                 </p>
               </div>
               <div className="flex gap-3 w-full sm:w-auto">
                 <Button variant="outline" size="sm" asChild>
-                  <a href={`/lists/${id}/public`} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={`/lists/${id}/public`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     <Eye className="h-4 w-4 mr-2" />
                     Ver como membro
                   </a>
@@ -195,8 +232,12 @@ export function ListDetailsPage() {
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Local</p>
-                  <p className="text-base font-semibold mt-0.5">{list.location}</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Local
+                  </p>
+                  <p className="text-base font-semibold mt-0.5">
+                    {list.location}
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -204,8 +245,12 @@ export function ListDetailsPage() {
                   <Calendar className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Data e Hora</p>
-                  <p className="text-base font-semibold mt-0.5">{formatDate(list.event_date)}</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Data e Hora
+                  </p>
+                  <p className="text-base font-semibold mt-0.5">
+                    {formatDate(list.event_date)}
+                  </p>
                 </div>
               </div>
             </div>
@@ -214,7 +259,9 @@ export function ListDetailsPage() {
           {/* Share Link */}
           <Card className="p-6 flex flex-col justify-center">
             <div className="mb-4">
-              <h3 className="text-lg font-bold mb-1 text-primary">Compartilhar Lista</h3>
+              <h3 className="text-lg font-bold mb-1 text-primary">
+                Compartilhar Lista
+              </h3>
               <p className="text-sm text-muted-foreground">
                 Envie este link para os convidados contribuírem.
               </p>
@@ -226,8 +273,16 @@ export function ListDetailsPage() {
                 value={`${window.location.origin}/lists/${id}/public`}
                 className="flex-1 rounded-l-lg border border-r-0 bg-muted px-3 py-2 text-sm"
               />
-              <Button onClick={copyLink} variant="outline" className="rounded-l-none border-l-0">
-                {copied ? <CheckCircle2 className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              <Button
+                onClick={copyLink}
+                variant="outline"
+                className="rounded-l-none border-l-0"
+              >
+                {copied ? (
+                  <CheckCircle2 className="h-4 w-4" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
               </Button>
             </div>
           </Card>
@@ -237,7 +292,9 @@ export function ListDetailsPage() {
         <Card className="overflow-hidden">
           <div className="px-6 py-5 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h3 className="text-lg font-bold text-primary">Itens Solicitados</h3>
+              <h3 className="text-lg font-bold text-primary">
+                Itens Solicitados
+              </h3>
               <p className="text-sm text-muted-foreground mt-1">
                 Acompanhe o preenchimento das parcelas.
               </p>
@@ -249,27 +306,44 @@ export function ListDetailsPage() {
               <thead>
                 <tr className="bg-muted/50 border-b text-xs uppercase tracking-wider text-muted-foreground">
                   <th className="px-6 py-4 font-semibold">Item</th>
-                  <th className="px-6 py-4 font-semibold text-center">Qtd / Parcela</th>
-                  <th className="px-6 py-4 font-semibold text-center">Unidade</th>
+                  <th className="px-6 py-4 font-semibold text-center">
+                    Qtd / Parcela
+                  </th>
+                  <th className="px-6 py-4 font-semibold text-center">
+                    Unidade
+                  </th>
                   <th className="px-6 py-4 font-semibold">Progresso</th>
-                  <th className="px-6 py-4 font-semibold text-center">Preenchidas</th>
-                  <th className="px-6 py-4 font-semibold text-center">Disponíveis</th>
+                  <th className="px-6 py-4 font-semibold text-center">
+                    Preenchidas
+                  </th>
+                  <th className="px-6 py-4 font-semibold text-center">
+                    Disponíveis
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y">
                 {itemsSummary.map((item, index) => (
-                  <tr key={index} className="hover:bg-muted/50 transition-colors">
+                  <tr
+                    key={index}
+                    className="hover:bg-muted/50 transition-colors"
+                  >
                     <td className="px-6 py-4 font-medium">{item.name}</td>
                     <td className="px-6 py-4 text-sm text-muted-foreground text-center">
                       {item.quantityPerMember}
                     </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground text-center">{item.unit}</td>
+                    <td className="px-6 py-4 text-sm text-muted-foreground text-center">
+                      {item.unit}
+                    </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
                           <div
                             className={`h-full transition-all ${
-                              item.progress === 100 ? 'bg-green-500' : item.progress > 0 ? 'bg-blue-500' : 'bg-gray-300'
+                              item.progress === 100
+                                ? 'bg-green-500'
+                                : item.progress > 0
+                                ? 'bg-blue-500'
+                                : 'bg-gray-300'
                             }`}
                             style={{ width: `${item.progress}%` }}
                           />
@@ -298,7 +372,8 @@ export function ListDetailsPage() {
           <div className="px-6 py-4 border-t flex items-center justify-between">
             <p className="text-sm text-muted-foreground">
               <span className="font-medium">{itemsWithMembers.length}</span> de{' '}
-              <span className="font-medium">{list.items.length}</span> itens preenchidos
+              <span className="font-medium">{list.items.length}</span> itens
+              preenchidos
             </p>
           </div>
         </Card>
