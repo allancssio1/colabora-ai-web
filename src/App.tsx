@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useAuthStore } from './stores/auth.store'
 
 // Pages
+import { LandingPage } from './pages/LandingPage'
 import { AuthPage } from './pages/auth/AuthPage'
 import { MyListsPage } from './pages/admin/MyListsPage'
 import { CreateListPage } from './pages/admin/CreateListPage'
@@ -34,6 +35,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route path="/auth" element={<AuthPage />} />
           <Route path="/lists/:id/public" element={<PublicListPage />} />
 
@@ -69,8 +71,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
-          <Route path="/" element={<Navigate to="/auth" replace />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
