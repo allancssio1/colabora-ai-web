@@ -6,12 +6,17 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import {
   registerMemberSchema,
   type RegisterMemberInput,
-} from '../../schemas/list.schema'
-import { listService } from '../../services/list.service'
-import { Button } from '../../components/ui/button'
-import { Input } from '../../components/ui/input'
-import { Card } from '../../components/ui/card'
-import { Label } from '../../components/ui/label'
+} from '@/schemas/list.schema'
+import { listService } from '@/services/list.service'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Label } from '@/components/ui/label'
 import {
   MapPin,
   Calendar,
@@ -22,9 +27,9 @@ import {
 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
-import { AppLogo } from '../../components/ui/app-logo'
-import { ThemeToggle } from '../../components/ui/theme-toggle'
-import { maskCPF } from '../../utils/masks'
+import { AppLogo } from '@/components/ui/app-logo'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
+import { maskCPF } from '@/utils/masks'
 
 export function PublicListPage() {
   const { id } = useParams<{ id: string }>()
@@ -125,7 +130,7 @@ export function PublicListPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
-      <nav className="relative flex w-full flex-col bg-card border-b">
+      <nav className="relative flex w-full flex-col bg-card border-b border-border/40">
         <div className="container max-w-240 mx-auto px-4 md:px-10 lg:px-40">
           <header className="flex items-center justify-between py-3">
             <div className="flex items-center gap-4">
@@ -144,40 +149,42 @@ export function PublicListPage() {
         <div className="container max-w-240 mx-auto px-4 md:px-10 lg:px-40 py-8">
           <div className="flex flex-col gap-6">
             {/* Event Header */}
-            <Card className="p-6">
-              <div className="flex flex-wrap justify-between gap-4">
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        canRegister
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
-                          : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                      }`}
-                    >
-                      {canRegister ? 'Lista Aberta' : 'Lista Encerrada'}
+            <Card>
+              <CardHeader>
+                <div className="flex flex-wrap justify-between gap-4">
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border ${
+                          canRegister
+                            ? 'bg-white text-green-700 border-green-300 dark:bg-green-900 dark:text-green-100 dark:border-green-800'
+                            : 'bg-white text-gray-700 border-gray-300 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600'
+                        }`}
+                      >
+                        {canRegister ? 'Lista Aberta' : 'Lista Encerrada'}
+                      </span>
+                    </div>
+                    <CardTitle className="text-3xl">
+                      {list.location}
+                    </CardTitle>
+                    <p className="text-sm text-muted-foreground">
+                      Confira os detalhes e contribua com o evento.
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-center justify-center rounded-lg bg-muted p-3 min-w-[80px] border border-border/40">
+                    <span className="text-xs font-bold uppercase text-muted-foreground">
+                      {format(new Date(list.event_date), 'MMM', {
+                        locale: ptBR,
+                      }).toUpperCase()}
+                    </span>
+                    <span className="text-2xl font-bold text-primary">
+                      {format(new Date(list.event_date), 'dd')}
                     </span>
                   </div>
-                  <h1 className="text-3xl font-bold tracking-tight text-primary">
-                    {list.location}
-                  </h1>
-                  <p className="text-sm text-muted-foreground">
-                    Confira os detalhes e contribua com o evento.
-                  </p>
                 </div>
-                <div className="flex flex-col items-center justify-center rounded-lg bg-muted p-3 min-w-[80px] border">
-                  <span className="text-xs font-bold uppercase text-muted-foreground">
-                    {format(new Date(list.event_date), 'MMM', {
-                      locale: ptBR,
-                    }).toUpperCase()}
-                  </span>
-                  <span className="text-2xl font-bold text-primary">
-                    {format(new Date(list.event_date), 'dd')}
-                  </span>
-                </div>
-              </div>
+              </CardHeader>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t mt-6">
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-0">
                 <div className="flex items-start gap-3">
                   <div className="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary">
                     <MapPin className="h-4 w-4" />
@@ -207,19 +214,22 @@ export function PublicListPage() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </CardContent>
             </Card>
 
             {/* User Form */}
             {canRegister && (
-              <Card className="p-6">
-                <div className="flex items-center gap-2 mb-6">
-                  <User className="h-5 w-5 text-primary" />
-                  <h3 className="text-lg font-bold leading-tight text-primary">
-                    Seus Dados
-                  </h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center gap-2">
+                    <User className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-lg">
+                      Seus Dados
+                    </CardTitle>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="name">Seu nome</Label>
                     <Input
@@ -256,35 +266,35 @@ export function PublicListPage() {
                       </p>
                     )}
                   </div>
-                </div>
-                <div className="mt-4 p-3 bg-primary/5 rounded-lg border border-primary/20">
-                  <p className="text-xs text-primary flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4" />
-                    Preencha seus dados para habilitar os botões de contribuição
-                    abaixo.
-                  </p>
-                </div>
+                  </div>
+                  <div className="p-3 bg-primary/5 rounded-lg border border-primary/20">
+                    <p className="text-xs text-primary flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4" />
+                      Preencha seus dados para habilitar os botões de contribuição
+                      abaixo.
+                    </p>
+                  </div>
+                </CardContent>
               </Card>
             )}
 
             {/* Items List */}
             <Card className="overflow-hidden">
-              <div className="px-6 py-4 border-b flex items-center justify-between bg-muted/50">
-                <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-bold leading-tight text-primary">
-                    Itens da Lista
-                  </h3>
-                </div>
+              <CardHeader className="flex-row items-center justify-between space-y-0 border-b border-border/40 bg-muted/30">
+                <CardTitle className="text-lg">
+                  Itens da Lista
+                </CardTitle>
                 <span className="text-sm text-muted-foreground">
                   {list.items.filter((i) => !i.member_name).length} de{' '}
                   {list.items.length} itens disponíveis
                 </span>
-              </div>
-              {list.items.map((item) => (
+              </CardHeader>
+              <CardContent className="p-0">
+                {list.items.map((item) => (
                 <div
                   key={item.id}
-                  className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 border-b last:border-b-0 transition-colors ${
-                    item.member_name ? 'bg-muted/20' : 'hover:bg-muted/50'
+                  className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 border-b border-border/30 last:border-b-0 transition-colors ${
+                    item.member_name ? 'bg-muted/10' : 'hover:bg-muted/30'
                   }`}
                 >
                   <div
@@ -358,6 +368,7 @@ export function PublicListPage() {
                   )}
                 </div>
               ))}
+              </CardContent>
             </Card>
 
             {!canRegister && (
@@ -373,7 +384,7 @@ export function PublicListPage() {
       </main>
 
       {/* Footer */}
-      <footer className="w-full border-t bg-card py-6">
+      <footer className="w-full border-t border-border/40 bg-card py-6">
         <div className="flex justify-center text-center px-4">
           <p className="text-sm text-muted-foreground">
             © 2024 Colabora-AI. Facilidade para seus eventos.

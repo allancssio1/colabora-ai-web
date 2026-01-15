@@ -1,9 +1,23 @@
 import { useQuery } from '@tanstack/react-query'
 import { useParams, Link } from 'react-router-dom'
-import { listService } from '../../services/list.service'
-import { Header } from '../../components/layout/Header'
-import { Button } from '../../components/ui/button'
-import { Card } from '../../components/ui/card'
+import { listService } from '@/services/list.service'
+import { Header } from '@/components/layout/Header'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import {
   MapPin,
   Calendar,
@@ -20,7 +34,7 @@ import {
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { useState } from 'react'
-import { cn } from '../../lib/utils'
+import { cn } from '@/lib/utils'
 import {
   Dialog,
   DialogContent,
@@ -29,8 +43,8 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from '../../components/ui/dialog'
-import { maskCPF } from '../../utils/masks'
+} from '@/components/ui/dialog'
+import { maskCPF } from '@/utils/masks'
 
 export function ListDetailsPage() {
   const { id } = useParams<{ id: string }>()
@@ -150,65 +164,63 @@ export function ListDetailsPage() {
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
+          <Card>
+            <CardHeader className="flex-row items-center gap-3 space-y-0 pb-3">
               <div className="p-2 bg-primary/10 rounded-lg text-primary">
                 <Activity className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
+                <CardDescription className="text-sm">
                   Status Atual
-                </p>
-                <p className="text-xl font-bold">
+                </CardDescription>
+                <CardTitle className="text-xl">
                   {list.status === 'active' ? 'Ativa' : 'Arquivada'}
-                </p>
+                </CardTitle>
               </div>
-            </div>
+            </CardHeader>
           </Card>
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
+          <Card>
+            <CardHeader className="flex-row items-center gap-3 space-y-0 pb-3">
               <div className="p-2 bg-primary/10 rounded-lg text-primary">
                 <Users className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
+                <CardDescription className="text-sm">
                   Participantes
-                </p>
-                <p className="text-xl font-bold">{totalParticipants}</p>
+                </CardDescription>
+                <CardTitle className="text-xl">{totalParticipants}</CardTitle>
               </div>
-            </div>
+            </CardHeader>
           </Card>
-          <Card className="p-4">
-            <div className="flex items-center gap-3">
+          <Card>
+            <CardHeader className="flex-row items-center gap-3 space-y-0 pb-3">
               <div className="p-2 bg-primary/10 rounded-lg text-primary">
                 <ShoppingCart className="h-5 w-5" />
               </div>
               <div>
-                <p className="text-sm font-medium text-muted-foreground">
+                <CardDescription className="text-sm">
                   Itens Cadastrados
-                </p>
-                <p className="text-xl font-bold">{list.items.length}</p>
+                </CardDescription>
+                <CardTitle className="text-xl">{list.items.length}</CardTitle>
               </div>
-            </div>
+            </CardHeader>
           </Card>
         </div>
 
         {/* Page Header */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Event Details */}
-          <Card className="lg:col-span-2 p-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <Card className="lg:col-span-2">
+            <CardHeader className="flex-col sm:flex-row justify-between items-start sm:items-center gap-4 space-y-4 sm:space-y-0">
               <div>
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-3xl font-black tracking-tight text-primary">
-                    {list.location}
-                  </h2>
+                  <CardTitle className="text-3xl">{list.location}</CardTitle>
                   <span
                     className={cn(
                       `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
                         list.status === 'active'
-                          ? 'bg-green-100 text-green-900 dark:bg-green-900/30 dark:text-green-400 border-green-300 dark:border-green-800'
-                          : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+                          ? 'bg-white text-green-700 border-green-300 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800'
+                          : 'bg-white text-gray-600 border-gray-300 dark:bg-gray-700 dark:text-gray-300'
                       }`,
                     )}
                   >
@@ -222,10 +234,10 @@ export function ListDetailsPage() {
                     )}
                   </span>
                 </div>
-                <p className="text-muted-foreground">
+                <CardDescription>
                   Gerencie os itens e acompanhe as contribuições para este
                   evento.
-                </p>
+                </CardDescription>
               </div>
               <div className="flex gap-3 w-full sm:w-auto">
                 <Button variant="outline" size="sm" asChild>
@@ -245,9 +257,9 @@ export function ListDetailsPage() {
                   </Link>
                 </Button>
               </div>
-            </div>
+            </CardHeader>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6 border-t">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-0">
               <div className="flex items-start gap-3">
                 <div className="p-2 bg-primary/10 rounded-lg text-primary">
                   <MapPin className="h-5 w-5" />
@@ -274,51 +286,49 @@ export function ListDetailsPage() {
                   </p>
                 </div>
               </div>
-            </div>
+            </CardContent>
           </Card>
 
           {/* Share Link */}
-          <Card className="p-6 flex flex-col justify-center">
-            <div className="mb-4">
-              <h3 className="text-lg font-bold mb-1 text-primary">
-                Compartilhar Lista
-              </h3>
-              <p className="text-sm text-muted-foreground">
+          <Card className="flex flex-col justify-center">
+            <CardHeader>
+              <CardTitle className="text-lg">Compartilhar Lista</CardTitle>
+              <CardDescription>
                 Envie este link para os convidados contribuírem.
-              </p>
-            </div>
-            <div className="flex rounded-lg shadow-sm">
-              <input
-                type="text"
-                readOnly
-                value={`${window.location.origin}/lists/${id}/public`}
-                className="flex-1 rounded-l-lg border border-r-0 bg-muted px-3 py-2 text-sm"
-              />
-              <Button
-                onClick={copyLink}
-                variant="outline"
-                className="rounded-l-none border-l-0"
-              >
-                {copied ? (
-                  <CheckCircle2 className="h-4 w-4" />
-                ) : (
-                  <Copy className="h-4 w-4" />
-                )}
-              </Button>
-            </div>
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex rounded-lg shadow-sm">
+                <input
+                  type="text"
+                  readOnly
+                  value={`${window.location.origin}/lists/${id}/public`}
+                  className="flex-1 rounded-l-lg  border-r-0 bg-muted px-3 py-2 text-sm"
+                />
+                <Button
+                  onClick={copyLink}
+                  variant="outline"
+                  className="rounded-l-none border-l-0"
+                >
+                  {copied ? (
+                    <CheckCircle2 className="h-4 w-4" />
+                  ) : (
+                    <Copy className="h-4 w-4" />
+                  )}
+                </Button>
+              </div>
+            </CardContent>
           </Card>
         </div>
 
         {/* Items List */}
         <Card className="overflow-hidden">
-          <div className="px-6 py-5 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <CardHeader className="flex-col sm:flex-row justify-between items-start sm:items-center gap-4 space-y-4 sm:space-y-0 border-b border-border/10">
             <div>
-              <h3 className="text-lg font-bold text-primary">
-                Itens Solicitados
-              </h3>
-              <p className="text-sm text-muted-foreground mt-1">
+              <CardTitle className="text-lg">Itens Solicitados</CardTitle>
+              <CardDescription className="mt-1">
                 Acompanhe o preenchimento das parcelas.
-              </p>
+              </CardDescription>
             </div>
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
@@ -394,83 +404,91 @@ export function ListDetailsPage() {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
-          </div>
+          </CardHeader>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-muted/50 border-b text-xs uppercase tracking-wider text-muted-foreground">
-                  <th className="px-6 py-4 font-semibold">Item</th>
-                  <th className="px-6 py-4 font-semibold text-center">
-                    Qtd / Parcela
-                  </th>
-                  <th className="px-6 py-4 font-semibold text-center">
-                    Unidade
-                  </th>
-                  <th className="px-6 py-4 font-semibold">Progresso</th>
-                  <th className="px-6 py-4 font-semibold text-center">
-                    Preenchidas
-                  </th>
-                  <th className="px-6 py-4 font-semibold text-center">
-                    Disponíveis
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {itemsSummary.map((item, index) => (
-                  <tr
-                    key={index}
-                    className="hover:bg-muted/50 transition-colors"
-                  >
-                    <td className="px-6 py-4 font-medium">{item.name}</td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground text-center">
-                      {item.quantityPerMember}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground text-center">
-                      {item.unit}
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
-                          <div
-                            className={`h-full transition-all ${
-                              item.progress === 100
-                                ? 'bg-green-500'
-                                : item.progress > 0
-                                ? 'bg-blue-500'
-                                : 'bg-gray-300'
-                            }`}
-                            style={{ width: `${item.progress}%` }}
-                          />
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/30 border-b border-border/40">
+                    <TableHead className="px-6 py-4 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
+                      Item
+                    </TableHead>
+                    <TableHead className="px-6 py-4 text-xs uppercase tracking-wider text-muted-foreground font-semibold text-center">
+                      Qtd / Parcela
+                    </TableHead>
+                    <TableHead className="px-6 py-4 text-xs uppercase tracking-wider text-muted-foreground font-semibold text-center">
+                      Unidade
+                    </TableHead>
+                    <TableHead className="px-6 py-4 text-xs uppercase tracking-wider text-muted-foreground font-semibold">
+                      Progresso
+                    </TableHead>
+                    <TableHead className="px-6 py-4 text-xs uppercase tracking-wider text-muted-foreground font-semibold text-center">
+                      Preenchidas
+                    </TableHead>
+                    <TableHead className="px-6 py-4 text-xs uppercase tracking-wider text-muted-foreground font-semibold text-center">
+                      Disponíveis
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody className="divide-y divide-border/30">
+                  {itemsSummary.map((item, index) => (
+                    <TableRow
+                      key={index}
+                      className="hover:bg-muted/50 transition-colors"
+                    >
+                      <TableCell className="px-6 py-4 font-medium">
+                        {item.name}
+                      </TableCell>
+                      <TableCell className="px-6 py-4 text-sm text-muted-foreground text-center">
+                        {item.quantityPerMember}
+                      </TableCell>
+                      <TableCell className="px-6 py-4 text-sm text-muted-foreground text-center">
+                        {item.unit}
+                      </TableCell>
+                      <TableCell className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 bg-muted rounded-full h-2 overflow-hidden">
+                            <div
+                              className={`h-full transition-all ${
+                                item.progress === 100
+                                  ? 'bg-green-500'
+                                  : item.progress > 0
+                                  ? 'bg-blue-500'
+                                  : 'bg-gray-300'
+                              }`}
+                              style={{ width: `${item.progress}%` }}
+                            />
+                          </div>
+                          <span className="text-xs font-medium text-muted-foreground min-w-[45px] text-right">
+                            {Math.round(item.progress)}%
+                          </span>
                         </div>
-                        <span className="text-xs font-medium text-muted-foreground min-w-[45px] text-right">
-                          {Math.round(item.progress)}%
+                      </TableCell>
+                      <TableCell className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white text-green-700 border border-green-300 dark:bg-green-900/30 dark:text-green-300 dark:border-green-800">
+                          {item.filled} de {item.totalParcels}
                         </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-                        {item.filled} de {item.totalParcels}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
-                        {item.available}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                      </TableCell>
+                      <TableCell className="px-6 py-4 text-center">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white text-gray-700 border border-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600">
+                          {item.available}
+                        </span>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
 
-          <div className="px-6 py-4 border-t flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              <span className="font-medium">{itemsWithMembers.length}</span> de{' '}
-              <span className="font-medium">{list.items.length}</span> itens
-              preenchidos
-            </p>
-          </div>
+            <div className="px-6 py-4 border-t border-border/40 flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                <span className="font-medium">{itemsWithMembers.length}</span>{' '}
+                de <span className="font-medium">{list.items.length}</span>{' '}
+                itens preenchidos
+              </p>
+            </div>
+          </CardContent>
         </Card>
       </main>
     </div>

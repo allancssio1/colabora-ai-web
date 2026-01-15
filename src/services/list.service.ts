@@ -1,10 +1,10 @@
-import { api } from '../lib/api'
-import type { List, PublicList } from '../types'
+import { api } from '@/lib/api'
+import type { List, PublicList } from '@/types'
 import type {
   CreateListInput,
   EditListInput,
   RegisterMemberInput,
-} from '../schemas/list.schema'
+} from '@/schemas/list.schema'
 
 export const listService = {
   async getLists(): Promise<List[]> {

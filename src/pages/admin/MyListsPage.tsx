@@ -1,10 +1,16 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { listService } from '../../services/list.service'
-import { Header } from '../../components/layout/Header'
-import { Button } from '../../components/ui/button'
-import { Card } from '../../components/ui/card'
+import { listService } from '@/services/list.service'
+import { Header } from '@/components/layout/Header'
+import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import {
   Dialog,
   DialogContent,
@@ -12,7 +18,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '../../components/ui/dialog'
+} from '@/components/ui/dialog'
 import { Plus, MapPin, Calendar, Edit, Eye, Trash2 } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
@@ -58,10 +64,11 @@ export function MyListsPage() {
     }
   }
 
-  const filteredLists = lists?.filter((list) => {
-    if (filter === 'all') return true
-    return list.status === filter
-  }) ?? []
+  const filteredLists =
+    lists?.filter((list) => {
+      if (filter === 'all') return true
+      return list.status === filter
+    }) ?? []
 
   return (
     <div className="min-h-screen bg-background">
@@ -92,7 +99,7 @@ export function MyListsPage() {
             className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full pl-3 pr-5 transition-colors ${
               filter === 'all'
                 ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary border border-border hover:bg-secondary/80 text-secondary-foreground'
+                : 'bg-secondary border border-border/40 hover:bg-secondary/80 text-secondary-foreground'
             }`}
           >
             <span className="text-sm font-medium">Todas</span>
@@ -102,7 +109,7 @@ export function MyListsPage() {
             className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full pl-3 pr-5 transition-colors ${
               filter === 'active'
                 ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary border border-border hover:bg-secondary/80 text-secondary-foreground'
+                : 'bg-secondary border border-border/40 hover:bg-secondary/80 text-secondary-foreground'
             }`}
           >
             <span className="text-sm font-medium">Ativas</span>
@@ -112,7 +119,7 @@ export function MyListsPage() {
             className={`flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full pl-3 pr-5 transition-colors ${
               filter === 'archived'
                 ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary border border-border hover:bg-secondary/80 text-secondary-foreground'
+                : 'bg-secondary border border-border/40 hover:bg-secondary/80 text-secondary-foreground'
             }`}
           >
             <span className="text-sm font-medium">Arquivadas</span>
@@ -126,73 +133,75 @@ export function MyListsPage() {
           </div>
         ) : filteredLists && filteredLists.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredLists.map((list) => (
-              <Card
-                key={list.id}
-                className="flex flex-col p-5 hover:shadow-md transition-all hover:-translate-y-1"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
-                    <Calendar className="h-6 w-6" />
-                  </div>
-                  <span
-                    className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                      list.status === 'active'
-                        ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 ring-emerald-600/20'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 ring-gray-500/10'
-                    }`}
-                  >
-                    {list.status === 'active' ? (
-                      <>
-                        <span className="size-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
-                        Ativa
-                      </>
-                    ) : (
-                      'Arquivada'
-                    )}
-                  </span>
-                </div>
+            {filteredLists.map((list) => {
+              return (
+                <Card
+                  key={list.id}
+                  className="flex flex-col hover:shadow-md transition-all hover:-translate-y-1"
+                >
+                  <CardHeader className="flex-row justify-between items-start space-y-0 pb-3">
+                    <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                      <Calendar className="h-6 w-6" />
+                    </div>
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${
+                        list.status === 'active'
+                          ? 'bg-white text-emerald-700 ring-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:ring-emerald-600/20'
+                          : 'bg-white text-gray-600 ring-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:ring-gray-500/10'
+                      }`}
+                    >
+                      {list.status === 'active' ? (
+                        <>
+                          <span className="size-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
+                          Ativa
+                        </>
+                      ) : (
+                        'Arquivada'
+                      )}
+                    </span>
+                  </CardHeader>
 
-                <div className="flex-1 mb-4">
-                  <h3 className="text-lg font-bold leading-tight mb-3 text-primary">
-                    {list.location}
-                  </h3>
-                  <div className="flex flex-col gap-2">
-                    <p className="text-sm text-muted-foreground flex items-start gap-2">
-                      <MapPin className="h-4 w-4 shrink-0 mt-0.5" />
-                      <span>{list.location}</span>
-                    </p>
-                    <p className="text-sm text-muted-foreground flex items-center gap-2">
-                      <Calendar className="h-4 w-4 shrink-0" />
-                      <span>{formatDate(list.event_date)}</span>
-                    </p>
-                  </div>
-                </div>
+                  <CardContent className="flex-1 space-y-3">
+                    <CardTitle className="text-lg leading-tight">
+                      {list.location}
+                    </CardTitle>
+                    <div className="flex flex-col gap-2">
+                      <p className="text-sm text-muted-foreground flex items-start gap-2">
+                        <MapPin className="h-4 w-4 shrink-0 mt-0.5" />
+                        <span>{list.location}</span>
+                      </p>
+                      <p className="text-sm text-muted-foreground flex items-center gap-2">
+                        <Calendar className="h-4 w-4 shrink-0" />
+                        <span>{formatDate(list.event_date)}</span>
+                      </p>
+                    </div>
+                  </CardContent>
 
-                <div className="flex items-center gap-2 mt-auto pt-4 border-t">
-                  <Link to={`/lists/${list.id}`} className="flex-1">
-                    <Button variant="outline" className="w-full" size="sm">
-                      <Eye className="h-4 w-4 mr-2" />
-                      Ver detalhes
+                  <CardFooter className="flex items-center gap-2 pt-4">
+                    <Link to={`/lists/${list.id}`} className="flex-1">
+                      <Button variant="outline" className="w-full" size="sm">
+                        <Eye className="h-4 w-4 mr-2" />
+                        Ver detalhes
+                      </Button>
+                    </Link>
+                    <Link to={`/lists/${list.id}/edit`}>
+                      <Button variant="outline" size="icon" title="Editar">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      title="Deletar"
+                      onClick={() => handleDeleteClick(list.id)}
+                      className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    >
+                      <Trash2 className="h-4 w-4" />
                     </Button>
-                  </Link>
-                  <Link to={`/lists/${list.id}/edit`}>
-                    <Button variant="outline" size="icon" title="Editar">
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    title="Deletar"
-                    onClick={() => handleDeleteClick(list.id)}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </Card>
-            ))}
+                  </CardFooter>
+                </Card>
+              )
+            })}
           </div>
         ) : (
           <div className="text-center py-12">

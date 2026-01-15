@@ -2,14 +2,18 @@ import { useQuery, useMutation } from '@tanstack/react-query'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { editListSchema, type EditListInput } from '../../schemas/list.schema'
-import { listService } from '../../services/list.service'
-import { Header } from '../../components/layout/Header'
-import { Button } from '../../components/ui/button'
-import { Input } from '../../components/ui/input'
-import { Label } from '../../components/ui/label'
-import { Card } from '../../components/ui/card'
-import { Textarea } from '../../components/ui/textarea'
+import { editListSchema, type EditListInput } from '@/schemas/list.schema'
+import { listService } from '@/services/list.service'
+import { Header } from '@/components/layout/Header'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Card,
+  CardContent,
+  CardTitle,
+} from '@/components/ui/card'
+import { Textarea } from '@/components/ui/textarea'
 import { ArrowLeft, Save, RefreshCw, Edit } from 'lucide-react'
 import { useState } from 'react'
 
@@ -103,12 +107,12 @@ export function EditListPage() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
           <Card className="overflow-hidden">
-            <div className="p-6 md:p-8 space-y-8">
+            <CardContent className="p-6 md:p-8 space-y-8">
               <div>
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-primary">
+                <CardTitle className="text-lg mb-4 flex items-center gap-2">
                   <Edit className="h-5 w-5" />
                   Informações Gerais
-                </h3>
+                </CardTitle>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <Label htmlFor="location" className="text-primary font-semibold">Nome do Evento</Label>
@@ -217,24 +221,24 @@ export function EditListPage() {
                   </label>
                 </div>
               </div>
-            </div>
 
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t bg-muted/50 px-6 py-4 md:px-8">
-              <p className="text-sm text-muted-foreground order-2 sm:order-1">
-                Última edição em {new Date(list.updated_at).toLocaleDateString('pt-BR')}
-              </p>
-              <div className="flex items-center gap-3 w-full sm:w-auto order-1 sm:order-2">
-                <Link to={`/lists/${id}`} className="flex-1 sm:flex-none">
-                  <Button type="button" variant="outline" className="w-full">
-                    Cancelar
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-t bg-muted/50 -mx-6 md:-mx-8 px-6 py-4 md:px-8 -mb-6 md:-mb-8">
+                <p className="text-sm text-muted-foreground order-2 sm:order-1">
+                  Última edição em {new Date(list.updated_at).toLocaleDateString('pt-BR')}
+                </p>
+                <div className="flex items-center gap-3 w-full sm:w-auto order-1 sm:order-2">
+                  <Link to={`/lists/${id}`} className="flex-1 sm:flex-none">
+                    <Button type="button" variant="outline" className="w-full">
+                      Cancelar
+                    </Button>
+                  </Link>
+                  <Button type="submit" disabled={mutation.isPending} className="flex-1 sm:flex-none">
+                    <Save className="h-4 w-4 mr-2" />
+                    {mutation.isPending ? 'Salvando...' : 'Salvar Alterações'}
                   </Button>
-                </Link>
-                <Button type="submit" disabled={mutation.isPending} className="flex-1 sm:flex-none">
-                  <Save className="h-4 w-4 mr-2" />
-                  {mutation.isPending ? 'Salvando...' : 'Salvar Alterações'}
-                </Button>
+                </div>
               </div>
-            </div>
+            </CardContent>
           </Card>
         </form>
       </main>

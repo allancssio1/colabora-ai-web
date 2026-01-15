@@ -3,13 +3,26 @@ import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate, Link } from 'react-router-dom'
-import { createListSchema, type CreateListInput, type ItemInput } from '../../schemas/list.schema'
-import { listService } from '../../services/list.service'
-import { Header } from '../../components/layout/Header'
-import { Button } from '../../components/ui/button'
-import { Input } from '../../components/ui/input'
-import { Label } from '../../components/ui/label'
-import { Card } from '../../components/ui/card'
+import { createListSchema, type CreateListInput, type ItemInput } from '@/schemas/list.schema'
+import { listService } from '@/services/list.service'
+import { Header } from '@/components/layout/Header'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table'
 import { ArrowLeft, Plus, Trash2, Save, CalendarIcon, MapPin, ShoppingCart, Info, PieChart } from 'lucide-react'
 
 const UNITS = ['kg', 'g', 'unidade(s)', 'litro(s)', 'ml', 'metro(s)', 'pacote(s)', 'lata(s)', 'garrafa(s)'] as const
@@ -94,17 +107,17 @@ export function CreateListPage() {
             Preencha os detalhes do seu evento e adicione os itens que os participantes precisarão trazer.
           </p>
         </div>
-        
+
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
           {/* Event Details Section */}
           <Card className="overflow-hidden">
-            <div className="border-b bg-muted/50 px-6 py-4">
-              <h2 className="text-lg font-bold flex items-center gap-2 text-primary">
+            <CardHeader className="border-b bg-muted/50">
+              <CardTitle className="text-lg flex items-center gap-2">
                 <MapPin className="h-5 w-5" />
                 Detalhes do Evento
-              </h2>
-            </div>
-            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="location" className="text-primary font-semibold">Local do evento</Label>
                 <div className="relative">
@@ -136,23 +149,24 @@ export function CreateListPage() {
                   <p className="text-sm text-destructive">{errors.event_date.message}</p>
                 )}
               </div>
-            </div>
+            </CardContent>
           </Card>
 
           {/* Items Section */}
           <Card className="overflow-hidden">
-            <div className="border-b bg-muted/50 px-6 py-4 flex justify-between items-center">
-              <h2 className="text-lg font-bold flex items-center gap-2 text-primary">
+            <CardHeader className="border-b bg-muted/50 flex-row justify-between items-center space-y-0">
+              <CardTitle className="text-lg flex items-center gap-2">
                 <ShoppingCart className="h-5 w-5" />
                 Itens para Contribuição
-              </h2>
+              </CardTitle>
               <span className="text-xs font-medium px-2 py-1 rounded bg-primary/10 text-primary">
                 {fields.length} itens adicionados
               </span>
-            </div>
+            </CardHeader>
 
-            {/* Add New Item Form */}
-            <div className="p-6 bg-muted/30 border-b">
+            <CardContent className="p-0">
+              {/* Add New Item Form */}
+              <div className="p-6 bg-muted/30 border-b">
               <h3 className="text-sm font-bold uppercase tracking-wider text-primary mb-4">
                 Adicionar Novo Item
               </h3>
@@ -244,39 +258,49 @@ export function CreateListPage() {
             {/* Items Table */}
             {fields.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-muted/50 border-b text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-                      <th className="px-6 py-4">Nome do Item</th>
-                      <th className="px-6 py-4 text-center">Qtd Total</th>
-                      <th className="px-6 py-4 text-center">Por Membro</th>
-                      <th className="px-6 py-4">Parcelamento (Preview)</th>
-                      <th className="px-6 py-4 text-right">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/50 border-b">
+                      <TableHead className="px-6 py-4 text-xs uppercase tracking-wider font-semibold text-muted-foreground">
+                        Nome do Item
+                      </TableHead>
+                      <TableHead className="px-6 py-4 text-xs uppercase tracking-wider font-semibold text-muted-foreground text-center">
+                        Qtd Total
+                      </TableHead>
+                      <TableHead className="px-6 py-4 text-xs uppercase tracking-wider font-semibold text-muted-foreground text-center">
+                        Por Membro
+                      </TableHead>
+                      <TableHead className="px-6 py-4 text-xs uppercase tracking-wider font-semibold text-muted-foreground">
+                        Parcelamento (Preview)
+                      </TableHead>
+                      <TableHead className="px-6 py-4 text-xs uppercase tracking-wider font-semibold text-muted-foreground text-right">
+                        Ações
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="divide-y">
                     {fields.map((field, index) => {
                       const parcels = calculateParcels(field.quantity_total, field.quantity_per_portion)
                       return (
-                        <tr key={field.id} className="hover:bg-muted/50 transition-colors">
-                          <td className="px-6 py-4 font-medium">{field.item_name}</td>
-                          <td className="px-6 py-4 text-center">
+                        <TableRow key={field.id} className="hover:bg-muted/50 transition-colors">
+                          <TableCell className="px-6 py-4 font-medium">{field.item_name}</TableCell>
+                          <TableCell className="px-6 py-4 text-center">
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-muted">
                               {field.quantity_total} {field.unit_type}
                             </span>
-                          </td>
-                          <td className="px-6 py-4 text-center text-muted-foreground">
+                          </TableCell>
+                          <TableCell className="px-6 py-4 text-center text-muted-foreground">
                             {field.quantity_per_portion} {field.unit_type}
-                          </td>
-                          <td className="px-6 py-4">
+                          </TableCell>
+                          <TableCell className="px-6 py-4">
                             <div className="flex items-center gap-2 text-muted-foreground">
                               <PieChart className="h-4 w-4 text-primary" />
                               <span>
                                 {parcels} parcelas de {field.quantity_per_portion} {field.unit_type}
                               </span>
                             </div>
-                          </td>
-                          <td className="px-6 py-4 text-right">
+                          </TableCell>
+                          <TableCell className="px-6 py-4 text-right">
                             <Button
                               type="button"
                               variant="ghost"
@@ -286,12 +310,12 @@ export function CreateListPage() {
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
-                          </td>
-                        </tr>
+                          </TableCell>
+                        </TableRow>
                       )
                     })}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             ) : (
               <div className="p-12 flex flex-col items-center justify-center text-center">
@@ -302,6 +326,7 @@ export function CreateListPage() {
                 <p className="text-muted-foreground">Adicione o primeiro item usando o formulário acima.</p>
               </div>
             )}
+            </CardContent>
           </Card>
 
           {/* Actions Footer */}

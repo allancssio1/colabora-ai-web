@@ -1,15 +1,15 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useAuthStore } from './stores/auth.store'
+import { useAuthStore } from '@/stores/auth.store'
 
 // Pages
-import { LandingPage } from './pages/LandingPage'
-import { AuthPage } from './pages/auth/AuthPage'
-import { MyListsPage } from './pages/admin/MyListsPage'
-import { CreateListPage } from './pages/admin/CreateListPage'
-import { ListDetailsPage } from './pages/admin/ListDetailsPage'
-import { EditListPage } from './pages/admin/EditListPage'
-import { PublicListPage } from './pages/public/PublicListPage'
+import { LandingPage } from '@/pages/LandingPage'
+import { AuthPage } from '@/pages/auth/AuthPage'
+import { MyListsPage } from '@/pages/admin/MyListsPage'
+import { CreateListPage } from '@/pages/admin/CreateListPage'
+import { ListDetailsPage } from '@/pages/admin/ListDetailsPage'
+import { EditListPage } from '@/pages/admin/EditListPage'
+import { PublicListPage } from '@/pages/public/PublicListPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -1,10 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuthStore } from '../../stores/auth.store'
+import { useAuthStore } from '@/stores/auth.store'
 import { LogOut, Search } from 'lucide-react'
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
-import { AppLogo } from '../ui/app-logo'
-import { ThemeToggle } from '../ui/theme-toggle'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { AppLogo } from '@/components/ui/app-logo'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
 
 export function Header() {
   const user = useAuthStore((state) => state.user)
