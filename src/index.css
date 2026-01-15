@@ -1,6 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 @import 'tailwindcss';
 
+/* Configurar dark mode baseado em classe ao invés de media query */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-background: 0 0% 100%;
   --color-foreground: 215 25% 27%;

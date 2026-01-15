@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom'
 import { listService } from '@/services/list.service'
 import { Header } from '@/components/layout/Header'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import {
   Card,
   CardContent,
@@ -219,7 +220,7 @@ export function ListDetailsPage() {
                     className={cn(
                       `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
                         list.status === 'active'
-                          ? 'bg-white text-green-700 border-green-300 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800'
+                          ? 'bg-white text-green-700 border-green-300 dark:bg-green-900/40 dark:text-green-400 dark:border-green-800'
                           : 'bg-white text-gray-600 border-gray-300 dark:bg-gray-700 dark:text-gray-300'
                       }`,
                     )}
@@ -299,11 +300,11 @@ export function ListDetailsPage() {
             </CardHeader>
             <CardContent>
               <div className="flex rounded-lg shadow-sm">
-                <input
+                <Input
                   type="text"
                   readOnly
                   value={`${window.location.origin}/lists/${id}/public`}
-                  className="flex-1 rounded-l-lg  border-r-0 bg-muted px-3 py-2 text-sm"
+                  className="flex-1 rounded-r-none border-r-0"
                 />
                 <Button
                   onClick={copyLink}
