@@ -68,6 +68,13 @@ export function ListDetailsPage() {
     }
   }
 
+  const isEventAvailable = () => {
+    if (!list?.event_date) return false
+    const eventDate = new Date(list.event_date)
+    const now = new Date()
+    return eventDate > now
+  }
+
   const copyLink = () => {
     const url = `${window.location.origin}/lists/${id}/public`
     navigator.clipboard.writeText(url)
@@ -214,7 +221,7 @@ export function ListDetailsPage() {
           <Card className="lg:col-span-2">
             <CardHeader className="flex-col sm:flex-row justify-between items-start sm:items-center gap-4 space-y-4 sm:space-y-0">
               <div>
-                <div className="flex items-center gap-3 mb-2">
+                <div className="flex items-center gap-3 mb-2 flex-wrap">
                   <CardTitle className="text-3xl">{list.location}</CardTitle>
                   <span
                     className={cn(
@@ -234,6 +241,20 @@ export function ListDetailsPage() {
                       'Arquivada'
                     )}
                   </span>
+                  {list.status === 'active' && (
+                    <span
+                      className={cn(
+                        `inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
+                          isEventAvailable()
+                            ? 'bg-white text-green-700 border-green-300 dark:bg-green-900/40 dark:text-green-400 dark:border-green-800'
+                            : 'bg-white text-red-700 border-red-300 dark:bg-red-900/40 dark:text-red-400 dark:border-red-800'
+                        }`,
+                      )}
+                    >
+                      <span className={`w-1.5 h-1.5 ${isEventAvailable() ? 'bg-green-500' : 'bg-red-500'} rounded-full mr-1.5`} />
+                      {isEventAvailable() ? 'Disponível' : 'Expirada'}
+                    </span>
+                  )}
                 </div>
                 <CardDescription>
                   Gerencie os itens e acompanhe as contribuições para este
@@ -338,7 +359,7 @@ export function ListDetailsPage() {
                   Ver Preenchidos
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto bg-white dark:bg-black">
                 <DialogHeader>
                   <DialogTitle>Itens Preenchidos</DialogTitle>
                   <DialogDescription>

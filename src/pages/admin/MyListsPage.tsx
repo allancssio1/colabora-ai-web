@@ -54,6 +54,12 @@ export function MyListsPage() {
     }
   }
 
+  const isEventAvailable = (eventDate: string) => {
+    const date = new Date(eventDate)
+    const now = new Date()
+    return date > now
+  }
+
   const formatDate = (dateString: string) => {
     try {
       return format(new Date(dateString), "dd/MM/yyyy 'às' HH:mm", {
@@ -143,22 +149,36 @@ export function MyListsPage() {
                     <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
                       <Calendar className="h-6 w-6" />
                     </div>
-                    <span
-                      className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                        list.status === 'active'
-                          ? 'bg-white text-emerald-700 ring-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:ring-emerald-600/20'
-                          : 'bg-white text-gray-600 ring-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:ring-gray-500/10'
-                      }`}
-                    >
-                      {list.status === 'active' ? (
-                        <>
-                          <span className="size-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
-                          Ativa
-                        </>
-                      ) : (
-                        'Arquivada'
+                    <div className="flex flex-col gap-2 items-end">
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${
+                          list.status === 'active'
+                            ? 'bg-white text-emerald-700 ring-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:ring-emerald-600/20'
+                            : 'bg-white text-gray-600 ring-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:ring-gray-500/10'
+                        }`}
+                      >
+                        {list.status === 'active' ? (
+                          <>
+                            <span className="size-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400" />
+                            Ativa
+                          </>
+                        ) : (
+                          'Arquivada'
+                        )}
+                      </span>
+                      {list.status === 'active' && (
+                        <span
+                          className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium ring-1 ring-inset ${
+                            isEventAvailable(list.event_date)
+                              ? 'bg-white text-emerald-700 ring-emerald-300 dark:bg-emerald-900/30 dark:text-emerald-400 dark:ring-emerald-600/20'
+                              : 'bg-white text-red-700 ring-red-300 dark:bg-red-900/30 dark:text-red-400 dark:ring-red-600/20'
+                          }`}
+                        >
+                          <span className={`size-1.5 rounded-full ${isEventAvailable(list.event_date) ? 'bg-emerald-600 dark:bg-emerald-400' : 'bg-red-600 dark:bg-red-400'}`} />
+                          {isEventAvailable(list.event_date) ? 'Disponível' : 'Expirada'}
+                        </span>
                       )}
-                    </span>
+                    </div>
                   </CardHeader>
 
                   <CardContent className="flex-1 space-y-3">
@@ -226,7 +246,7 @@ export function MyListsPage() {
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent>
+        <DialogContent className="bg-white dark:bg-black">
           <DialogHeader>
             <DialogTitle>Deletar Lista</DialogTitle>
             <DialogDescription>
