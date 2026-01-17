@@ -13,6 +13,7 @@ export const listService = {
   },
   async getListById(id: string): Promise<List> {
     const response = await api.get<List>(`/lists/${id}`)
+    console.log('🚀 ~ response:', response)
     return response.data
   },
 
@@ -35,7 +36,9 @@ export const listService = {
     await api.delete(`/lists/${id}`)
   },
 
-  async registerMember(data: RegisterMemberInput & { listId: string }): Promise<void> {
+  async registerMember(
+    data: RegisterMemberInput & { listId: string },
+  ): Promise<void> {
     const { listId, ...body } = data
     await api.post(`/lists/${listId}/register`, body)
   },
