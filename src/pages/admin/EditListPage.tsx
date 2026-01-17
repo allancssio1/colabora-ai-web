@@ -2,8 +2,11 @@ import { useQuery, useMutation } from '@tanstack/react-query'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 import { editListSchema, type EditListInput } from '@/schemas/list.schema'
 import { listService } from '@/services/list.service'
+import { toastMessages } from '@/utils/toast-messages'
+import { extractErrorMessage } from '@/utils/error-handler'
 import { Header } from '@/components/layout/Header'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -52,7 +55,11 @@ export function EditListPage() {
   const mutation = useMutation({
     mutationFn: (data: EditListInput) => listService.updateList(id!, data),
     onSuccess: () => {
+      toast.success(toastMessages.list.updateSuccess)
       navigate(`/lists/${id}`)
+    },
+    onError: (error) => {
+      toast.error(extractErrorMessage(error, toastMessages.list.updateError))
     },
   })
 

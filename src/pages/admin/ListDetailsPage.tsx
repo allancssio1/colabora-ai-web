@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { useParams, Link } from 'react-router-dom'
+import { toast } from 'sonner'
 import { listService } from '@/services/list.service'
+import { toastMessages } from '@/utils/toast-messages'
 import { Header } from '@/components/layout/Header'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -49,7 +51,6 @@ import { maskCPF } from '@/utils/masks'
 
 export function ListDetailsPage() {
   const { id } = useParams<{ id: string }>()
-  const [copied, setCopied] = useState(false)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   const { data: list, isLoading } = useQuery({
@@ -78,13 +79,18 @@ export function ListDetailsPage() {
   const copyLink = () => {
     const url = `${window.location.origin}/lists/${id}/public`
     navigator.clipboard.writeText(url)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+      .then(() => {
+        toast.success(toastMessages.list.copySuccess)
+      })
+      .catch(() => {
+        toast.error(toastMessages.list.copyError)
+      })
   }
 
   const handleDownloadList = () => {
-    // TODO: Implementar download em DOCX ou PDF
-    console.log('Download da lista será implementado futuramente')
+    toast.info('Funcionalidade em desenvolvimento', {
+      description: 'O download em PDF/DOCX será implementado em breve.'
+    })
   }
 
   // Itens preenchidos (com membro)
@@ -251,7 +257,11 @@ export function ListDetailsPage() {
                         }`,
                       )}
                     >
-                      <span className={`w-1.5 h-1.5 ${isEventAvailable() ? 'bg-green-500' : 'bg-red-500'} rounded-full mr-1.5`} />
+                      <span
+                        className={`w-1.5 h-1.5 ${
+                          isEventAvailable() ? 'bg-green-500' : 'bg-red-500'
+                        } rounded-full mr-1.5`}
+                      />
                       {isEventAvailable() ? 'Disponível' : 'Expirada'}
                     </span>
                   )}
@@ -332,11 +342,7 @@ export function ListDetailsPage() {
                   variant="outline"
                   className="rounded-l-none border-l-0"
                 >
-                  {copied ? (
-                    <CheckCircle2 className="h-4 w-4" />
-                  ) : (
-                    <Copy className="h-4 w-4" />
-                  )}
+                  <Copy className="h-4 w-4" />
                 </Button>
               </div>
             </CardContent>

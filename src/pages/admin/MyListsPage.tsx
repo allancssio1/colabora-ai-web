@@ -1,7 +1,10 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
+import { toast } from 'sonner'
 import { listService } from '@/services/list.service'
+import { toastMessages } from '@/utils/toast-messages'
+import { extractErrorMessage } from '@/utils/error-handler'
 import { Header } from '@/components/layout/Header'
 import { Button } from '@/components/ui/button'
 import {
@@ -37,9 +40,13 @@ export function MyListsPage() {
   const deleteMutation = useMutation({
     mutationFn: listService.deleteList,
     onSuccess: () => {
+      toast.success(toastMessages.list.deleteSuccess)
       queryClient.invalidateQueries({ queryKey: ['lists'] })
       setDeleteDialogOpen(false)
       setListToDelete(null)
+    },
+    onError: (error) => {
+      toast.error(extractErrorMessage(error, toastMessages.list.deleteError))
     },
   })
 

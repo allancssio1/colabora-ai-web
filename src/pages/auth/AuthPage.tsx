@@ -3,9 +3,12 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 import { loginSchema, registerSchema, type LoginInput, type RegisterInput } from '@/schemas/auth.schema'
 import { authService } from '@/services/auth.service'
 import { useAuthStore } from '@/stores/auth.store'
+import { toastMessages } from '@/utils/toast-messages'
+import { extractErrorMessage } from '@/utils/error-handler'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -32,19 +35,27 @@ export function AuthPage() {
     mutationFn: authService.login,
     onSuccess: (data) => {
       setAuth(data.user, data.token)
+      toast.success(toastMessages.auth.loginSuccess)
       navigate('/my-lists')
+    },
+    onError: (error) => {
+      toast.error(extractErrorMessage(error, toastMessages.auth.loginError))
     },
   })
 
   const registerMutation = useMutation({
     mutationFn: authService.register,
     onSuccess: async (_, variables) => {
+      toast.success(toastMessages.auth.registerSuccess)
       // Após registro bem-sucedido, fazer login automaticamente
       const registerData = variables as RegisterInput
       loginMutation.mutate({
         email: registerData.email,
         password: registerData.password,
       })
+    },
+    onError: (error) => {
+      toast.error(extractErrorMessage(error, toastMessages.auth.registerError))
     },
   })
 

@@ -3,8 +3,11 @@ import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate, Link } from 'react-router-dom'
+import { toast } from 'sonner'
 import { createListSchema, type CreateListInput, type ItemInput } from '@/schemas/list.schema'
 import { listService } from '@/services/list.service'
+import { toastMessages } from '@/utils/toast-messages'
+import { extractErrorMessage } from '@/utils/error-handler'
 import { Header } from '@/components/layout/Header'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -53,7 +56,11 @@ export function CreateListPage() {
   const mutation = useMutation({
     mutationFn: listService.createList,
     onSuccess: (data) => {
+      toast.success(toastMessages.list.createSuccess)
       navigate(`/lists/${data.id}`)
+    },
+    onError: (error) => {
+      toast.error(extractErrorMessage(error, toastMessages.list.createError))
     },
   })
 

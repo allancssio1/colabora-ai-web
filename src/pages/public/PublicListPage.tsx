@@ -3,11 +3,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { toast } from 'sonner'
 import {
   registerMemberSchema,
   type RegisterMemberInput,
 } from '@/schemas/list.schema'
 import { listService } from '@/services/list.service'
+import { toastMessages } from '@/utils/toast-messages'
+import { extractErrorMessage } from '@/utils/error-handler'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -56,13 +59,15 @@ export function PublicListPage() {
 
   const mutation = useMutation({
     mutationFn: listService.registerMember,
-    onSuccess: (data) => {
-      console.log('✅ Mutation SUCCESS:', data)
+    onSuccess: () => {
+      toast.success(toastMessages.member.registerSuccess, {
+        description: 'Você assumiu este item com sucesso!'
+      })
       queryClient.invalidateQueries({ queryKey: ['publicList', id] })
       setSelectedItemId(null)
     },
     onError: (error) => {
-      console.error('❌ Mutation ERROR:', error)
+      toast.error(extractErrorMessage(error, toastMessages.member.registerError))
     },
   })
 
@@ -70,7 +75,11 @@ export function PublicListPage() {
     mutationFn: ({ listId, itemId }: { listId: string; itemId: string }) =>
       listService.unregisterMember(listId, itemId),
     onSuccess: () => {
+      toast.success(toastMessages.member.unregisterSuccess)
       queryClient.invalidateQueries({ queryKey: ['publicList', id] })
+    },
+    onError: (error) => {
+      toast.error(extractErrorMessage(error, toastMessages.member.unregisterError))
     },
   })
 
