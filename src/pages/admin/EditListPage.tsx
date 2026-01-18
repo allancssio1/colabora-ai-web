@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { useParams, useNavigate, Link } from 'react-router-dom'
-import { useForm, useFieldArray } from 'react-hook-form'
+import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { toast } from 'sonner'
 import {
@@ -42,8 +42,8 @@ import {
   PieChart,
   Info,
   MapPin,
-  CalendarIcon,
 } from 'lucide-react'
+import { DateTimePicker } from '@/components/ui/date-time-picker'
 import { useState, useMemo } from 'react'
 
 const UNITS = [
@@ -70,10 +70,11 @@ export function EditListPage() {
   })
 
   // Agrupar parcelas por item_name para obter itens únicos
+  const items = list?.items
   const groupedItems = useMemo(() => {
-    if (!list?.items) return []
+    if (!items) return []
 
-    const grouped = list.items.reduce(
+    const grouped = items.reduce(
       (acc, parcel) => {
         if (!acc[parcel.item_name]) {
           acc[parcel.item_name] = {
@@ -92,7 +93,7 @@ export function EditListPage() {
           item_name: string
           unit_type: string
           quantity_per_portion: number
-          parcels: typeof list.items
+          parcels: typeof items
         }
       >,
     )
@@ -103,7 +104,7 @@ export function EditListPage() {
       quantity_per_portion: group.quantity_per_portion,
       quantity_total: group.parcels.length * group.quantity_per_portion,
     }))
-  }, [list?.items])
+  }, [items])
 
   const {
     register,
@@ -346,15 +347,17 @@ export function EditListPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="event_date">Data e hora</Label>
-                <div className="relative">
-                  <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="event_date"
-                    type="datetime-local"
-                    className="pl-10"
-                    {...register('event_date')}
-                  />
-                </div>
+                <Controller
+                  name="event_date"
+                  control={control}
+                  render={({ field }) => (
+                    <DateTimePicker
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Selecione data e hora"
+                    />
+                  )}
+                />
                 {errors.event_date && (
                   <p className="text-sm text-destructive">
                     {errors.event_date.message}
@@ -387,6 +390,13 @@ export function EditListPage() {
                   editingIndex !== null
                     ? countTakenParcels(fields[editingIndex]?.item_name)
                     : 0
+                // Usar quantity_per_portion original para calcular mínimo (não pode ser alterado quando há membros)
+                const originalQuantityPerPortion =
+                  editingIndex !== null
+                    ? fields[editingIndex]?.quantity_per_portion || 1
+                    : 1
+                const minQuantityTotal =
+                  takenParcelsCount * originalQuantityPerPortion
 
                 return (
                   <div className="p-6 border-b">
@@ -425,12 +435,7 @@ export function EditListPage() {
                         <Input
                           type="number"
                           placeholder="0"
-                          min={
-                            isEditingItemWithMembers
-                              ? takenParcelsCount *
-                                (newItem.quantity_per_portion || 1)
-                              : 1
-                          }
+                          min={isEditingItemWithMembers ? minQuantityTotal : 1}
                           value={newItem.quantity_total || ''}
                           onChange={(e) =>
                             setNewItem({
@@ -441,10 +446,7 @@ export function EditListPage() {
                         />
                         {isEditingItemWithMembers && (
                           <p className="text-xs text-amber-600">
-                            Mínimo:{' '}
-                            {takenParcelsCount *
-                              (newItem.quantity_per_portion || 1)}{' '}
-                            (parcelas assumidas)
+                            Mínimo: {minQuantityTotal} (parcelas assumidas)
                           </p>
                         )}
                       </div>
@@ -462,9 +464,7 @@ export function EditListPage() {
                             })
                           }
                         >
-                          <SelectTrigger
-                            className="bg-background"
-                          >
+                          <SelectTrigger className="bg-background">
                             <SelectValue placeholder="Selecione" />
                           </SelectTrigger>
                           <SelectContent className="bg-white dark:bg-zinc-900 ">

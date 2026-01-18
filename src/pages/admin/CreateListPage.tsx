@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useForm, useFieldArray } from 'react-hook-form'
+import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate, Link } from 'react-router-dom'
@@ -37,12 +37,12 @@ import {
   Plus,
   Trash2,
   Save,
-  CalendarIcon,
   MapPin,
   ShoppingCart,
   Info,
   PieChart,
 } from 'lucide-react'
+import { DateTimePicker } from '@/components/ui/date-time-picker'
 
 const UNITS = [
   'kg',
@@ -180,15 +180,17 @@ export function CreateListPage() {
 
               <div className="space-y-2">
                 <Label htmlFor="event_date">Data e hora</Label>
-                <div className="relative">
-                  <CalendarIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="event_date"
-                    type="datetime-local"
-                    className="pl-10"
-                    {...register('event_date')}
-                  />
-                </div>
+                <Controller
+                  name="event_date"
+                  control={control}
+                  render={({ field }) => (
+                    <DateTimePicker
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Selecione data e hora"
+                    />
+                  )}
+                />
                 {errors.event_date && (
                   <p className="text-sm text-destructive">
                     {errors.event_date.message}
