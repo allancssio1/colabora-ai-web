@@ -46,4 +46,16 @@ export const listService = {
   async unregisterMember(listId: string, itemId: string): Promise<void> {
     await api.delete(`/lists/${listId}/items/${itemId}/register`)
   },
+
+  async createListFromTemplate(templateListId: string): Promise<List> {
+    const response = await api.post<List>('/lists/from-template', {
+      template_list_id: templateListId,
+    })
+    return response.data
+  },
+
+  async toggleListStatus(listId: string): Promise<List> {
+    const response = await api.patch<List>(`/lists/${listId}/status`)
+    return response.data
+  },
 }

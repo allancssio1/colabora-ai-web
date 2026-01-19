@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -43,9 +43,10 @@ import {
   Info,
   MapPin,
   FileText,
+  Power,
 } from 'lucide-react'
 import { DateTimePicker } from '@/components/ui/date-time-picker'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 
 const UNITS = [
   'kg',
@@ -62,6 +63,7 @@ const UNITS = [
 export function EditListPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   const { data: list, isLoading } = useQuery({
     queryKey: ['list', id],
@@ -101,8 +103,8 @@ export function EditListPage() {
     return Object.values(grouped).map((group) => ({
       item_name: group.item_name,
       unit_type: group.unit_type as ItemInput['unit_type'],
-      quantity_per_portion: group.quantity_per_portion,
-      quantity_total: group.parcels.length * group.quantity_per_portion,
+      quantity_per_portion: Number(group.quantity_per_portion),
+      quantity_total: group.parcels.length * Number(group.quantity_per_portion),
     }))
   }, [items])
 
@@ -111,16 +113,32 @@ export function EditListPage() {
     handleSubmit,
     control,
     formState: { errors },
+    reset,
   } = useForm<EditListInput>({
     resolver: zodResolver(editListSchema),
-    values: list
-      ? {
-          description: list.description || '',
-          event_date: list.event_date,
-          items: groupedItems,
-        }
-      : undefined,
+    defaultValues: {
+      description: '',
+      event_date: '',
+      items: [],
+    },
   })
+
+  useEffect(() => {
+    if (list) {
+      reset({
+        description: list.description || '',
+        event_date: list.event_date,
+        items: groupedItems,
+      })
+    }
+  }, [list, groupedItems, reset])
+
+  // Debug: Log de erros de validação
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      console.log('Form validation errors:', errors)
+    }
+  }, [errors])
 
   const { fields, append, remove, update } = useFieldArray({
     control,
@@ -252,9 +270,35 @@ export function EditListPage() {
     },
   })
 
+  const toggleStatusMutation = useMutation({
+    mutationFn: () => listService.toggleListStatus(id!),
+    onSuccess: (updatedList) => {
+      const statusText = updatedList.status === 'active' ? 'ativada' : 'desativada'
+      toast.success(`Lista ${statusText} com sucesso!`)
+      queryClient.invalidateQueries({ queryKey: ['list', id] })
+      queryClient.invalidateQueries({ queryKey: ['lists'] })
+    },
+    onError: (error) => {
+      toast.error(extractErrorMessage(error, 'Erro ao alterar status da lista'))
+    },
+  })
+
   const onSubmit = (data: EditListInput) => {
+    console.log('🚀 ~ onSubmit ~ data:', data)
     mutation.mutate(data)
   }
+
+  // Debug: Log ao clicar no submit para ver estado do form
+  const handleFormSubmit = handleSubmit(
+    (data) => {
+      console.log('✅ Validação passou, dados:', data)
+      onSubmit(data)
+    },
+    (errors) => {
+      console.log('❌ Validação falhou, erros:', errors)
+      toast.error('Verifique os campos obrigatórios')
+    },
+  )
 
   if (isLoading) {
     return (
@@ -282,7 +326,7 @@ export function EditListPage() {
     <div className="min-h-screen bg-background">
       <Header />
 
-      <main className="container max-w-[1040px] mx-auto px-4 sm:px-6 py-8">
+      <main className="container max-w-260 mx-auto px-4 sm:px-6 py-8">
         {/* Breadcrumbs */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
           <Link
@@ -308,7 +352,7 @@ export function EditListPage() {
 
         <form
           id="edit-list-form"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleFormSubmit}
           className="flex flex-col gap-8"
         >
           {/* Event Details Section */}
@@ -365,7 +409,7 @@ export function EditListPage() {
                 <Textarea
                   id="description"
                   placeholder="Ex: Traga sua cadeira de praia, o evento comeca as 14h..."
-                  className="min-h-[100px]"
+                  className="min-h-24"
                   {...register('description')}
                 />
               </div>
@@ -401,7 +445,9 @@ export function EditListPage() {
                     ? fields[editingIndex]?.quantity_per_portion || 1
                     : 1
                 const minQuantityTotal =
-                  takenParcelsCount * originalQuantityPerPortion
+                  takenParcelsCount > 0
+                    ? (takenParcelsCount - 1) * originalQuantityPerPortion + 1
+                    : 1
 
                 return (
                   <div className="p-6 border-b">
@@ -449,11 +495,6 @@ export function EditListPage() {
                             })
                           }
                         />
-                        {isEditingItemWithMembers && (
-                          <p className="text-xs text-amber-600">
-                            Minimo: {minQuantityTotal} (parcelas assumidas)
-                          </p>
-                        )}
                       </div>
 
                       {/* Unidade */}
@@ -506,13 +547,14 @@ export function EditListPage() {
                           <div className="flex gap-2">
                             <Button
                               type="button"
-                              variant="outline"
+                              variant="ghost"
                               className="flex-1"
                               onClick={cancelEdit}
                             >
                               Cancelar
                             </Button>
                             <Button
+                              variant="outline"
                               type="button"
                               className="flex-1"
                               onClick={saveEdit}
@@ -685,27 +727,45 @@ export function EditListPage() {
                   </p>
                 </div>
               )}
+              {errors.items && (
+                <p className="text-sm text-destructive text-center pb-4">
+                  {errors.items.message}
+                </p>
+              )}
             </CardContent>
           </Card>
-        </form>
-
-        {/* Actions Footer */}
-        <div className="sticky bottom-0 -mx-4 sm:mx-0 px-4 py-4 bg-background/80 backdrop-blur-md border-t flex justify-end gap-3 sm:rounded-xl shadow-lg">
-          <Link to={`/lists/${id}`}>
-            <Button type="button" variant="ghost">
-              Cancelar
+          {/* Actions Footer */}
+          <div className="sticky bottom-0 -mx-4 sm:mx-0 px-4 py-4 bg-background/80 backdrop-blur-md border-t flex justify-between sm:rounded-xl shadow-lg">
+            <Button
+              type="button"
+              variant={list.status === 'active' ? 'destructive' : 'default'}
+              onClick={() => toggleStatusMutation.mutate()}
+              disabled={toggleStatusMutation.isPending}
+            >
+              <Power className="h-4 w-4 mr-2" />
+              {toggleStatusMutation.isPending
+                ? 'Alterando...'
+                : list.status === 'active'
+                  ? 'Desativar Lista'
+                  : 'Ativar Lista'}
             </Button>
-          </Link>
-          <Button
-            form="edit-list-form"
-            type="submit"
-            variant="outline"
-            disabled={mutation.isPending}
-          >
-            <Save className="h-4 w-4 mr-2" />
-            {mutation.isPending ? 'Salvando...' : 'Salvar Alteracoes'}
-          </Button>
-        </div>
+            <div className="flex gap-3">
+              <Link to={`/lists/${id}`}>
+                <Button type="button" variant="ghost">
+                  Cancelar
+                </Button>
+              </Link>
+              <Button
+                type="submit"
+                variant="outline"
+                disabled={mutation.isPending}
+              >
+                <Save className="h-4 w-4 mr-2" />
+                {mutation.isPending ? 'Salvando...' : 'Salvar Alteracoes'}
+              </Button>
+            </div>
+          </div>
+        </form>
       </main>
     </div>
   )

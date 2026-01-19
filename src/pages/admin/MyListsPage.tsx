@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { listService } from '@/services/list.service'
 import { toastMessages } from '@/utils/toast-messages'
 import { extractErrorMessage } from '@/utils/error-handler'
 import { Header } from '@/components/layout/Header'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 import {
   Card,
   CardContent,
@@ -22,7 +23,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Plus, MapPin, Calendar, Edit, Eye, Trash2 } from 'lucide-react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Plus, MapPin, Calendar, Edit, Eye, Trash2, Copy } from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
@@ -30,7 +38,10 @@ export function MyListsPage() {
   const [filter, setFilter] = useState<'all' | 'active' | 'archived'>('all')
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [listToDelete, setListToDelete] = useState<string | null>(null)
+  const [createModalOpen, setCreateModalOpen] = useState(false)
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null)
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const { data: lists, isLoading } = useQuery({
     queryKey: ['lists'],
@@ -47,6 +58,21 @@ export function MyListsPage() {
     },
     onError: (error) => {
       toast.error(extractErrorMessage(error, toastMessages.list.deleteError))
+    },
+  })
+
+  const createFromTemplateMutation = useMutation({
+    mutationFn: (templateId: string) =>
+      listService.createListFromTemplate(templateId),
+    onSuccess: (newList) => {
+      toast.success('Lista criada com sucesso!')
+      queryClient.invalidateQueries({ queryKey: ['lists'] })
+      setCreateModalOpen(false)
+      setSelectedTemplateId(null)
+      navigate(`/lists/${newList.id}/edit`)
+    },
+    onError: (error) => {
+      toast.error(extractErrorMessage(error, 'Erro ao criar lista'))
     },
   })
 
@@ -97,12 +123,23 @@ export function MyListsPage() {
               Gerencie seus eventos e contribuições
             </p>
           </div>
-          <Link to="/lists/create">
-            <Button size="lg" className="shadow-lg shadow-primary/20">
+          {lists && lists.length > 0 ? (
+            <Button
+              size="lg"
+              className="shadow-lg shadow-primary/20"
+              onClick={() => setCreateModalOpen(true)}
+            >
               <Plus className="h-5 w-5 mr-2" />
               Criar nova lista
             </Button>
-          </Link>
+          ) : (
+            <Link to="/lists/create">
+              <Button size="lg" className="shadow-lg shadow-primary/20">
+                <Plus className="h-5 w-5 mr-2" />
+                Criar nova lista
+              </Button>
+            </Link>
+          )}
         </div>
 
         {/* Filter Tabs */}
@@ -277,6 +314,81 @@ export function MyListsPage() {
               {deleteMutation.isPending ? 'Deletando...' : 'Deletar'}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Create List Modal */}
+      <Dialog
+        open={createModalOpen}
+        onOpenChange={(open) => {
+          setCreateModalOpen(open)
+          if (!open) setSelectedTemplateId(null)
+        }}
+      >
+        <DialogContent className="bg-white dark:bg-black">
+          <DialogHeader>
+            <DialogTitle>Como deseja criar sua lista?</DialogTitle>
+            <DialogDescription>
+              Escolha uma opcao para comecar
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex flex-col gap-4 py-4">
+            {/* Opcao 1: Usar modelo */}
+            <div className="space-y-3">
+              <Label>Usar lista existente como modelo</Label>
+              <Select
+                value={selectedTemplateId || ''}
+                onValueChange={setSelectedTemplateId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione uma lista" />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-black">
+                  {lists?.map((list) => (
+                    <SelectItem key={list.id} value={list.id}>
+                      {list.location} -{' '}
+                      {format(new Date(list.event_date), 'dd/MM/yyyy')}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button
+                className="w-full"
+                disabled={
+                  !selectedTemplateId || createFromTemplateMutation.isPending
+                }
+                onClick={() =>
+                  selectedTemplateId &&
+                  createFromTemplateMutation.mutate(selectedTemplateId)
+                }
+              >
+                <Copy className="h-4 w-4 mr-2" />
+                {createFromTemplateMutation.isPending
+                  ? 'Criando...'
+                  : 'Criar a partir do modelo'}
+              </Button>
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-white dark:bg-black px-2 text-muted-foreground">
+                  ou
+                </span>
+              </div>
+            </div>
+
+            {/* Opcao 2: Criar do zero */}
+            <Link to="/lists/create" onClick={() => setCreateModalOpen(false)}>
+              <Button variant="outline" className="w-full">
+                <Plus className="h-4 w-4 mr-2" />
+                Criar lista do zero
+              </Button>
+            </Link>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
