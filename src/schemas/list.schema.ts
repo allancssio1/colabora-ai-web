@@ -9,15 +9,14 @@ export const itemSchema = z.object({
 
 export const createListSchema = z.object({
   location: z.string().min(3, 'Local do evento é obrigatório'),
+  description: z.string().optional(),
   event_date: z.string().min(1, 'Data e hora do evento são obrigatórias'),
   items: z.array(itemSchema).min(1, 'Adicione pelo menos um item'),
 })
 
 export const editListSchema = z.object({
-  location: z.string().min(3, 'Local do evento é obrigatório'),
-  event_date: z.string().min(1, 'Data e hora do evento são obrigatórias'),
   description: z.string().optional(),
-  mode: z.enum(['continue', 'reset']),
+  event_date: z.string().min(1, 'Data e hora do evento são obrigatórias'),
   items: z.array(itemSchema).min(1, 'Adicione pelo menos um item'),
 })
 

@@ -25,6 +25,7 @@ export interface ListItem {
 export interface List {
   id: string
   location: string
+  description: string | null
   event_date: string
   status: 'active' | 'archived'
   user_id: string
@@ -37,6 +38,7 @@ export interface List {
 export interface PublicList {
   id: string
   location: string
+  description: string | null
   event_date: string
   status: 'active' | 'archived'
   items: PublicListItem[]

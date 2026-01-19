@@ -14,6 +14,7 @@ import { extractErrorMessage } from '@/utils/error-handler'
 import { Header } from '@/components/layout/Header'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -34,7 +35,6 @@ import {
 import {
   ArrowLeft,
   Save,
-  RefreshCw,
   Edit,
   ShoppingCart,
   Plus,
@@ -42,6 +42,7 @@ import {
   PieChart,
   Info,
   MapPin,
+  FileText,
 } from 'lucide-react'
 import { DateTimePicker } from '@/components/ui/date-time-picker'
 import { useState, useMemo } from 'react'
@@ -61,7 +62,6 @@ const UNITS = [
 export function EditListPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [mode, setMode] = useState<'continue' | 'reset'>('continue')
 
   const { data: list, isLoading } = useQuery({
     queryKey: ['list', id],
@@ -69,7 +69,7 @@ export function EditListPage() {
     enabled: !!id,
   })
 
-  // Agrupar parcelas por item_name para obter itens únicos
+  // Agrupar parcelas por item_name para obter itens unicos
   const items = list?.items
   const groupedItems = useMemo(() => {
     if (!items) return []
@@ -115,9 +115,8 @@ export function EditListPage() {
     resolver: zodResolver(editListSchema),
     values: list
       ? {
-          location: list.location,
+          description: list.description || '',
           event_date: list.event_date,
-          mode,
           items: groupedItems,
         }
       : undefined,
@@ -193,7 +192,7 @@ export function EditListPage() {
       const hasMembers = checkIfItemHasMembers(originalItem.item_name)
 
       if (hasMembers) {
-        // Item com membros: só pode alterar quantity_total
+        // Item com membros: so pode alterar quantity_total
         const takenCount = countTakenParcels(originalItem.item_name)
         const newParcels = calculateParcels(
           newItem.quantity_total || 0,
@@ -202,7 +201,7 @@ export function EditListPage() {
 
         if (newParcels < takenCount) {
           toast.error(
-            `Este item possui ${takenCount} parcelas assumidas. Não é possível reduzir para menos de ${takenCount} parcelas.`,
+            `Este item possui ${takenCount} parcelas assumidas. Nao e possivel reduzir para menos de ${takenCount} parcelas.`,
           )
           return
         }
@@ -234,7 +233,7 @@ export function EditListPage() {
 
     if (hasMembersInBackend) {
       toast.error(
-        'Este item já possui membros cadastrados e não pode ser removido',
+        'Este item ja possui membros cadastrados e nao pode ser removido',
       )
       return
     }
@@ -254,7 +253,7 @@ export function EditListPage() {
   })
 
   const onSubmit = (data: EditListInput) => {
-    mutation.mutate({ ...data, mode })
+    mutation.mutate(data)
   }
 
   if (isLoading) {
@@ -273,7 +272,7 @@ export function EditListPage() {
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container py-8">
-          <p>Lista não encontrada</p>
+          <p>Lista nao encontrada</p>
         </div>
       </div>
     )
@@ -300,11 +299,10 @@ export function EditListPage() {
         {/* Page Heading */}
         <div className="flex flex-col gap-2 mb-8">
           <h1 className="text-3xl sm:text-4xl font-black leading-tight tracking-tight text-primary">
-            Editar Lista de Contribuição
+            Editar Lista de Contribuicao
           </h1>
           <p className="text-muted-foreground text-base max-w-2xl">
-            Gerencie os detalhes do evento ou inicie um novo ciclo de
-            arrecadação.
+            Atualize a data, detalhes e os itens da sua lista.
           </p>
         </div>
 
@@ -321,28 +319,19 @@ export function EditListPage() {
                 Detalhes do Evento
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+              {/* Location - Read Only */}
               <div className="space-y-2">
-                <Label
-                  htmlFor="location"
-                  className="text-primary font-semibold"
-                >
+                <Label className="text-primary font-semibold flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
                   Local do evento
                 </Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
-                  <Input
-                    id="location"
-                    placeholder="Ex: Churrasco na casa do João"
-                    className="pl-10"
-                    {...register('location')}
-                  />
+                <div className="px-3 py-2 bg-muted/50 rounded-lg border text-muted-foreground">
+                  {list.location}
                 </div>
-                {errors.location && (
-                  <p className="text-sm text-destructive">
-                    {errors.location.message}
-                  </p>
-                )}
+                <p className="text-xs text-muted-foreground">
+                  O local do evento nao pode ser alterado apos a criacao.
+                </p>
               </div>
 
               <div className="space-y-2">
@@ -364,6 +353,22 @@ export function EditListPage() {
                   </p>
                 )}
               </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Label
+                  htmlFor="description"
+                  className="flex items-center gap-2"
+                >
+                  <FileText className="h-4 w-4 text-primary" />
+                  Detalhes do evento (opcional)
+                </Label>
+                <Textarea
+                  id="description"
+                  placeholder="Ex: Traga sua cadeira de praia, o evento comeca as 14h..."
+                  className="min-h-[100px]"
+                  {...register('description')}
+                />
+              </div>
             </CardContent>
           </Card>
 
@@ -372,7 +377,7 @@ export function EditListPage() {
             <CardHeader className="border-b bg-muted/50 flex-row justify-between items-center space-y-0">
               <CardTitle className="text-lg flex items-center gap-2">
                 <ShoppingCart className="h-5 w-5" />
-                Itens para Contribuição
+                Itens para Contribuicao
               </CardTitle>
               <span className="text-xs font-medium px-2 py-1 rounded bg-primary/10 text-primary">
                 {fields.length} itens
@@ -380,7 +385,7 @@ export function EditListPage() {
             </CardHeader>
 
             <CardContent className="p-0">
-              {/* Formulário de Adicionar/Editar */}
+              {/* Formulario de Adicionar/Editar */}
               {(() => {
                 // Verificar se o item sendo editado tem membros
                 const isEditingItemWithMembers =
@@ -390,7 +395,7 @@ export function EditListPage() {
                   editingIndex !== null
                     ? countTakenParcels(fields[editingIndex]?.item_name)
                     : 0
-                // Usar quantity_per_portion original para calcular mínimo (não pode ser alterado quando há membros)
+                // Usar quantity_per_portion original para calcular minimo (nao pode ser alterado quando ha membros)
                 const originalQuantityPerPortion =
                   editingIndex !== null
                     ? fields[editingIndex]?.quantity_per_portion || 1
@@ -446,7 +451,7 @@ export function EditListPage() {
                         />
                         {isEditingItemWithMembers && (
                           <p className="text-xs text-amber-600">
-                            Mínimo: {minQuantityTotal} (parcelas assumidas)
+                            Minimo: {minQuantityTotal} (parcelas assumidas)
                           </p>
                         )}
                       </div>
@@ -494,9 +499,9 @@ export function EditListPage() {
                         />
                       </div>
 
-                      {/* Botões */}
+                      {/* Botoes */}
                       <div className="sm:col-span-2 lg:col-span-2 space-y-1">
-                        <Label className="text-xs invisible">Ação</Label>
+                        <Label className="text-xs invisible">Acao</Label>
                         {editingIndex !== null ? (
                           <div className="flex gap-2">
                             <Button
@@ -533,10 +538,10 @@ export function EditListPage() {
                     <div className="mt-4 flex items-start gap-3 p-3 bg-primary/5 rounded-lg border border-primary/20">
                       <Info className="h-5 w-5 text-primary shrink-0" />
                       <div className="flex flex-col sm:flex-row sm:items-center gap-1">
-                        <p className="text-sm font-medium">Previsão:</p>
+                        <p className="text-sm font-medium">Previsao:</p>
                         {previewParcels ? (
                           <p className="text-sm text-muted-foreground">
-                            Isso gerará{' '}
+                            Isso gerara{' '}
                             <strong className="text-primary">
                               {previewParcels} parcelas
                             </strong>{' '}
@@ -579,7 +584,7 @@ export function EditListPage() {
                           Status
                         </TableHead>
                         <TableHead className="px-6 py-4 text-right">
-                          Ações
+                          Acoes
                         </TableHead>
                       </TableRow>
                     </TableHeader>
@@ -625,7 +630,7 @@ export function EditListPage() {
                                 </span>
                               ) : (
                                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                                  Disponível
+                                  Disponivel
                                 </span>
                               )}
                             </TableCell>
@@ -651,7 +656,7 @@ export function EditListPage() {
                                   disabled={hasMembers}
                                   title={
                                     hasMembers
-                                      ? 'Item com membros não pode ser removido'
+                                      ? 'Item com membros nao pode ser removido'
                                       : 'Remover item'
                                   }
                                   className="text-muted-foreground hover:text-destructive"
@@ -673,10 +678,10 @@ export function EditListPage() {
                     <ShoppingCart className="h-8 w-8 text-primary" />
                   </div>
                   <h3 className="text-lg font-medium mb-1 text-primary">
-                    Sua lista está vazia
+                    Sua lista esta vazia
                   </h3>
                   <p className="text-muted-foreground">
-                    Adicione o primeiro item usando o formulário acima.
+                    Adicione o primeiro item usando o formulario acima.
                   </p>
                 </div>
               )}
@@ -684,100 +689,21 @@ export function EditListPage() {
           </Card>
         </form>
 
-        {/* Ação da Lista - FORA DO CARD */}
-        <div className="mt-8">
-          <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-primary">
-            <RefreshCw className="h-5 w-5" />
-            Ação da Lista
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label
-              className={`cursor-pointer relative flex flex-col p-5 rounded-xl border-2 transition-all ${
-                mode === 'continue'
-                  ? 'border-primary bg-primary/5 dark:bg-primary/10'
-                  : 'border-border hover:border-muted-foreground/30'
-              }`}
-            >
-              <input
-                type="radio"
-                name="mode"
-                value="continue"
-                checked={mode === 'continue'}
-                onChange={() => setMode('continue')}
-                className="sr-only"
-              />
-              <div className="flex items-center gap-3 mb-2">
-                <div
-                  className={`flex items-center justify-center size-10 rounded-full ${
-                    mode === 'continue'
-                      ? 'bg-primary/20 text-primary'
-                      : 'bg-muted text-muted-foreground'
-                  }`}
-                >
-                  <Edit className="h-5 w-5" />
-                </div>
-                <span className="font-bold text-primary">
-                  Continuar lista existente
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground pl-[52px]">
-                Mantém todos os participantes, itens e histórico atual. Ideal
-                para correções e atualizações.
-              </p>
-            </label>
-
-            <label
-              className={`cursor-pointer relative flex flex-col p-5 rounded-xl border-2 transition-all ${
-                mode === 'reset'
-                  ? 'border-primary bg-primary/5 dark:bg-primary/10'
-                  : 'border-border hover:border-muted-foreground/30'
-              }`}
-            >
-              <input
-                type="radio"
-                name="mode"
-                value="reset"
-                checked={mode === 'reset'}
-                onChange={() => setMode('reset')}
-                className="sr-only"
-              />
-              <div className="flex items-center gap-3 mb-2">
-                <div
-                  className={`flex items-center justify-center size-10 rounded-full ${
-                    mode === 'reset'
-                      ? 'bg-primary/20 text-primary'
-                      : 'bg-muted text-muted-foreground'
-                  }`}
-                >
-                  <RefreshCw className="h-5 w-5" />
-                </div>
-                <span className="font-bold text-primary">
-                  Criar nova lista (Resetar)
-                </span>
-              </div>
-              <p className="text-sm text-muted-foreground pl-[52px]">
-                Inicia um novo ciclo. Todos os dados atuais serão arquivados e a
-                contagem reiniciada.
-              </p>
-            </label>
-          </div>
-        </div>
-
         {/* Actions Footer */}
         <div className="sticky bottom-0 -mx-4 sm:mx-0 px-4 py-4 bg-background/80 backdrop-blur-md border-t flex justify-end gap-3 sm:rounded-xl shadow-lg">
           <Link to={`/lists/${id}`}>
-            <Button type="button" variant="outline">
+            <Button type="button" variant="ghost">
               Cancelar
             </Button>
           </Link>
           <Button
             form="edit-list-form"
             type="submit"
+            variant="outline"
             disabled={mutation.isPending}
           >
             <Save className="h-4 w-4 mr-2" />
-            {mutation.isPending ? 'Salvando...' : 'Salvar Alterações'}
+            {mutation.isPending ? 'Salvando...' : 'Salvar Alteracoes'}
           </Button>
         </div>
       </main>

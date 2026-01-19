@@ -15,6 +15,7 @@ import { extractErrorMessage } from '@/utils/error-handler'
 import { Header } from '@/components/layout/Header'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -41,6 +42,7 @@ import {
   ShoppingCart,
   Info,
   PieChart,
+  FileText,
 } from 'lucide-react'
 import { DateTimePicker } from '@/components/ui/date-time-picker'
 
@@ -154,7 +156,7 @@ export function CreateListPage() {
                 Detalhes do Evento
               </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
               <div className="space-y-2">
                 <Label
                   htmlFor="location"
@@ -196,6 +198,22 @@ export function CreateListPage() {
                     {errors.event_date.message}
                   </p>
                 )}
+              </div>
+
+              <div className="space-y-2 md:col-span-2">
+                <Label
+                  htmlFor="description"
+                  className="flex items-center gap-2"
+                >
+                  <FileText className="h-4 w-4 text-primary" />
+                  Detalhes do evento (opcional)
+                </Label>
+                <Textarea
+                  id="description"
+                  placeholder="Ex: Traga sua cadeira de praia, o evento começa às 14h..."
+                  className="min-h-[100px]"
+                  {...register('description')}
+                />
               </div>
             </CardContent>
           </Card>
@@ -256,10 +274,10 @@ export function CreateListPage() {
                         })
                       }
                     >
-                      <SelectTrigger className="w-full bg-white dark:bg-zinc-900">
+                      <SelectTrigger className="w-full">
                         <SelectValue placeholder="Selecione" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-zinc-900">
+                      <SelectContent className="bg-white dark:bg-black">
                         {UNITS.map((unit) => (
                           <SelectItem key={unit} value={unit}>
                             {unit}
@@ -413,12 +431,13 @@ export function CreateListPage() {
           {/* Actions Footer */}
           <div className="sticky bottom-0 -mx-4 sm:mx-0 px-4 py-4 bg-background/80 backdrop-blur-md border-t flex justify-end gap-3 sm:rounded-xl shadow-lg">
             <Link to="/my-lists">
-              <Button type="button" variant="outline">
+              <Button type="button" variant="ghost">
                 Cancelar
               </Button>
             </Link>
             <Button
               type="submit"
+              variant="outline"
               disabled={mutation.isPending || fields.length === 0}
             >
               <Save className="h-4 w-4 mr-2" />
