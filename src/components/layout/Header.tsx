@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/auth.store'
-import { LogOut, Search } from 'lucide-react'
+import { HelpCircle, LogOut, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { AppLogo } from '@/components/ui/app-logo'
@@ -48,6 +48,11 @@ export function Header() {
             <p className="text-xs text-muted-foreground">{user?.email}</p>
           </div>
           <ThemeToggle />
+          <Button variant="ghost" size="icon" asChild title="Ajuda">
+            <Link to="/docs">
+              <HelpCircle className="h-5 w-5" />
+            </Link>
+          </Button>
           <Button variant="ghost" size="icon" onClick={handleLogout} title="Sair">
             <LogOut className="h-5 w-5" />
           </Button>

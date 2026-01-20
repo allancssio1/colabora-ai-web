@@ -11,6 +11,7 @@ import { CreateListPage } from '@/pages/admin/CreateListPage'
 import { ListDetailsPage } from '@/pages/admin/ListDetailsPage'
 import { EditListPage } from '@/pages/admin/EditListPage'
 import { PublicListPage } from '@/pages/public/PublicListPage'
+import { DocsPage } from '@/pages/DocsPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,6 +39,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/docs" element={<DocsPage />} />
           <Route path="/lists/:id/public" element={<PublicListPage />} />
 
           <Route
