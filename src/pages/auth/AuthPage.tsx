@@ -4,7 +4,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import { loginSchema, registerSchema, type LoginInput, type RegisterInput } from '@/schemas/auth.schema'
+import {
+  loginSchema,
+  registerSchema,
+  type LoginInput,
+  type RegisterInput,
+} from '@/schemas/auth.schema'
 import { authService } from '@/services/auth.service'
 import { useAuthStore } from '@/stores/auth.store'
 import { toastMessages } from '@/utils/toast-messages'
@@ -12,7 +17,7 @@ import { extractErrorMessage } from '@/utils/error-handler'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, User, CreditCard } from 'lucide-react'
 import { AppLogo } from '@/components/ui/app-logo'
 
 export function AuthPage() {
@@ -76,19 +81,23 @@ export function AuthPage() {
         <div
           className="absolute inset-0 bg-cover bg-center opacity-40 mix-blend-multiply"
           style={{
-            backgroundImage: "url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200')",
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200')",
           }}
         />
         <div className="relative z-10 flex flex-col justify-center items-start p-12 lg:p-24 max-w-lg">
           <div className="inline-flex items-center gap-2 mb-6 bg-white/20 backdrop-blur-md px-4 py-2 rounded-full border border-white/30 shadow-sm">
             <AppLogo className="h-5 w-5 text-primary" />
-            <span className="text-primary font-bold tracking-wide text-sm">Colabora-AI</span>
+            <span className="text-primary font-bold tracking-wide text-sm">
+              Colabora-AI
+            </span>
           </div>
           <h1 className="text-4xl lg:text-5xl font-extrabold text-primary tracking-tight leading-tight mb-6">
             Gerencie listas de eventos sem esforço.
           </h1>
           <p className="text-lg text-primary font-medium leading-relaxed max-w-md">
-            Simplifique a organização de seus eventos colaborativos. Junte-se a milhares de organizadores que usam o Colabora-AI.
+            Simplifique a organização de seus eventos colaborativos. Junte-se a
+            milhares de organizadores que usam o Colabora-AI.
           </p>
           <div className="flex flex-wrap gap-3 mt-10">
             {['Tempo Real', 'Seguro', 'Rápido'].map((feature) => (
@@ -152,24 +161,73 @@ export function AuthPage() {
           {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome</Label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <User className="h-5 w-5 text-muted-foreground" />
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="name">Nome</Label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <User className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <Input
+                      id="name"
+                      type="text"
+                      placeholder="Seu nome completo"
+                      className="pl-10"
+                      {...register('name')}
+                    />
                   </div>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Seu nome completo"
-                    className="pl-10"
-                    {...register('name')}
-                  />
+                  {'name' in errors && errors.name && (
+                    <p className="text-sm text-destructive">
+                      {errors.name.message}
+                    </p>
+                  )}
                 </div>
-                {'name' in errors && errors.name && (
-                  <p className="text-sm text-destructive">{errors.name.message}</p>
-                )}
-              </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="cpf">CPF</Label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <CreditCard className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <Input
+                      id="cpf"
+                      type="text"
+                      placeholder="000.000.000-00"
+                      className="pl-10"
+                      maxLength={14}
+                      {...register('cpf', {
+                        onChange: (e) => {
+                          let value = e.target.value.replace(/\D/g, '')
+                          if (value.length > 11) value = value.slice(0, 11)
+                          if (value.length > 9) {
+                            value = value.replace(
+                              /(\d{3})(\d{3})(\d{3})(\d{1,2})/,
+                              '$1.$2.$3-$4',
+                            )
+                          } else if (value.length > 6) {
+                            value = value.replace(
+                              /(\d{3})(\d{3})(\d{1,3})/,
+                              '$1.$2.$3',
+                            )
+                          } else if (value.length > 3) {
+                            value = value.replace(/(\d{3})(\d{1,3})/, '$1.$2')
+                          }
+                          e.target.value = value
+                        },
+                        setValueAs: (value: string) => value.replace(/\D/g, ''),
+                      })}
+                    />
+                  </div>
+                  {'cpf' in errors && errors.cpf && (
+                    <p className="text-sm text-destructive">
+                      {errors.cpf.message}
+                    </p>
+                  )}
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Necessário para pagamentos via PIX.
+                  </p>
+                </div>
+              </>
             )}
 
             <div className="space-y-2">
@@ -187,7 +245,9 @@ export function AuthPage() {
                 />
               </div>
               {errors.email && (
-                <p className="text-sm text-destructive">{errors.email.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -195,7 +255,10 @@ export function AuthPage() {
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Senha</Label>
                 {isLogin && (
-                  <a href="#" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors">
+                  <a
+                    href="#"
+                    className="text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                  >
                     Esqueceu a senha?
                   </a>
                 )}
@@ -224,7 +287,9 @@ export function AuthPage() {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-sm text-destructive">{errors.password.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.password.message}
+                </p>
               )}
               {!isLogin && (
                 <p className="text-xs text-muted-foreground mt-1">
@@ -233,7 +298,12 @@ export function AuthPage() {
               )}
             </div>
 
-            <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
+            <Button
+              type="submit"
+              className="w-full"
+              size="lg"
+              disabled={isLoading}
+            >
               {isLoading ? 'Carregando...' : isLogin ? 'Entrar' : 'Registrar'}
             </Button>
           </form>

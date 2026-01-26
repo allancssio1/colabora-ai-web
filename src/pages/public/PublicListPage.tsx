@@ -13,12 +13,7 @@ import { toastMessages } from '@/utils/toast-messages'
 import { extractErrorMessage } from '@/utils/error-handler'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import {
   MapPin,
@@ -61,13 +56,15 @@ export function PublicListPage() {
     mutationFn: listService.registerMember,
     onSuccess: () => {
       toast.success(toastMessages.member.registerSuccess, {
-        description: 'Você assumiu este item com sucesso!'
+        description: 'Você assumiu este item com sucesso!',
       })
       queryClient.invalidateQueries({ queryKey: ['publicList', id] })
       setSelectedItemId(null)
     },
     onError: (error) => {
-      toast.error(extractErrorMessage(error, toastMessages.member.registerError))
+      toast.error(
+        extractErrorMessage(error, toastMessages.member.registerError),
+      )
     },
   })
 
@@ -79,7 +76,9 @@ export function PublicListPage() {
       queryClient.invalidateQueries({ queryKey: ['publicList', id] })
     },
     onError: (error) => {
-      toast.error(extractErrorMessage(error, toastMessages.member.unregisterError))
+      toast.error(
+        extractErrorMessage(error, toastMessages.member.unregisterError),
+      )
     },
   })
 
@@ -173,9 +172,7 @@ export function PublicListPage() {
                         {canRegister ? 'Lista Aberta' : 'Lista Encerrada'}
                       </span>
                     </div>
-                    <CardTitle className="text-3xl">
-                      {list.location}
-                    </CardTitle>
+                    <CardTitle className="text-3xl">{list.location}</CardTitle>
                     <p className="text-sm text-muted-foreground">
                       Confira os detalhes e contribua com o evento.
                     </p>
@@ -232,55 +229,53 @@ export function PublicListPage() {
                 <CardHeader>
                   <div className="flex items-center gap-2">
                     <User className="h-5 w-5 text-primary" />
-                    <CardTitle className="text-lg">
-                      Seus Dados
-                    </CardTitle>
+                    <CardTitle className="text-lg">Seus Dados</CardTitle>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="name">Seu nome</Label>
-                    <Input
-                      id="name"
-                      placeholder="Ex: João da Silva"
-                      {...register('name')}
-                      className={errors.name ? 'border-destructive' : ''}
-                    />
-                    {errors.name && (
-                      <p className="text-sm font-medium text-destructive flex items-center gap-1">
-                        <AlertCircle className="h-3 w-3" />
-                        {errors.name.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="cpf">CPF</Label>
-                    <Input
-                      id="cpf"
-                      placeholder="000.000.000-00"
-                      maxLength={14}
-                      {...register('cpf', {
-                        onChange: (e) => {
-                          const formatted = maskCPF(e.target.value)
-                          setValue('cpf', formatted)
-                        },
-                      })}
-                      className={errors.cpf ? 'border-destructive' : ''}
-                    />
-                    {errors.cpf && (
-                      <p className="text-sm font-medium text-destructive flex items-center gap-1">
-                        <AlertCircle className="h-3 w-3" />
-                        {errors.cpf.message}
-                      </p>
-                    )}
-                  </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Seu nome</Label>
+                      <Input
+                        id="name"
+                        placeholder="Ex: João da Silva"
+                        {...register('name')}
+                        className={errors.name ? 'border-destructive' : ''}
+                      />
+                      {errors.name && (
+                        <p className="text-sm font-medium text-destructive flex items-center gap-1">
+                          <AlertCircle className="h-3 w-3" />
+                          {errors.name.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cpf">CPF</Label>
+                      <Input
+                        id="cpf"
+                        placeholder="000.000.000-00"
+                        maxLength={14}
+                        {...register('cpf', {
+                          onChange: (e) => {
+                            const formatted = maskCPF(e.target.value)
+                            setValue('cpf', formatted)
+                          },
+                        })}
+                        className={errors.cpf ? 'border-destructive' : ''}
+                      />
+                      {errors.cpf && (
+                        <p className="text-sm font-medium text-destructive flex items-center gap-1">
+                          <AlertCircle className="h-3 w-3" />
+                          {errors.cpf.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
                   <div className="p-3 bg-primary/5 rounded-lg border border-primary/20">
                     <p className="text-xs text-primary flex items-center gap-2">
                       <AlertCircle className="h-4 w-4" />
-                      Preencha seus dados para habilitar os botões de contribuição
-                      abaixo.
+                      Preencha seus dados para habilitar os botões de
+                      contribuição abaixo.
                     </p>
                   </div>
                 </CardContent>
@@ -290,9 +285,7 @@ export function PublicListPage() {
             {/* Items List */}
             <Card className="overflow-hidden">
               <CardHeader className="flex-row items-center justify-between space-y-0 border-b border-border/40 bg-muted/30">
-                <CardTitle className="text-lg">
-                  Itens da Lista
-                </CardTitle>
+                <CardTitle className="text-lg">Itens da Lista</CardTitle>
                 <span className="text-sm text-muted-foreground">
                   {list.items.filter((i) => !i.member_name).length} de{' '}
                   {list.items.length} itens disponíveis
@@ -300,83 +293,83 @@ export function PublicListPage() {
               </CardHeader>
               <CardContent className="p-0">
                 {list.items.map((item) => (
-                <div
-                  key={item.id}
-                  className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 border-b border-border/30 last:border-b-0 transition-colors ${
-                    item.member_name ? 'bg-muted/10' : 'hover:bg-muted/30'
-                  }`}
-                >
                   <div
-                    className={`flex items-start gap-4 mb-4 sm:mb-0 ${
-                      item.member_name ? 'opacity-75' : ''
+                    key={item.id}
+                    className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 border-b border-border/30 last:border-b-0 transition-colors ${
+                      item.member_name ? 'bg-muted/10' : 'hover:bg-muted/30'
                     }`}
                   >
                     <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-lg ${
-                        item.member_name
-                          ? 'bg-muted text-muted-foreground'
-                          : 'bg-muted text-foreground'
+                      className={`flex items-start gap-4 mb-4 sm:mb-0 ${
+                        item.member_name ? 'opacity-75' : ''
                       }`}
                     >
-                      {item.member_name ? (
-                        <CheckCircle2 className="h-5 w-5" />
-                      ) : (
-                        <span className="text-lg">📦</span>
-                      )}
-                    </div>
-                    <div className="flex flex-col">
-                      <p
-                        className={`font-semibold text-base ${
+                      <div
+                        className={`flex h-10 w-10 items-center justify-center rounded-lg ${
                           item.member_name
-                            ? 'line-through text-muted-foreground'
-                            : ''
+                            ? 'bg-muted text-muted-foreground'
+                            : 'bg-muted text-foreground'
                         }`}
                       >
-                        {item.quantity_per_portion} {item.unit_type} de{' '}
-                        {item.item_name}
-                      </p>
-                    </div>
-                  </div>
-
-                  {item.member_name ? (
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium text-muted-foreground">
-                        Reservado por{' '}
-                        <span className="font-bold text-foreground">
-                          {item.member_name}
-                        </span>
-                      </span>
-
-                      {item.member_name === name &&
-                        item.member_cpf === cpf.replace(/\D/g, '') && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleUnregister(item.id)}
-                            disabled={unregisterMutation.isPending}
-                            title="Desfazer reserva"
-                          >
-                            <Undo2 className="h-4 w-4" />
-                          </Button>
+                        {item.member_name ? (
+                          <CheckCircle2 className="h-5 w-5" />
+                        ) : (
+                          <span className="text-lg">📦</span>
                         )}
+                      </div>
+                      <div className="flex flex-col">
+                        <p
+                          className={`font-semibold text-base ${
+                            item.member_name
+                              ? 'line-through text-muted-foreground'
+                              : ''
+                          }`}
+                        >
+                          {item.quantity_per_portion} {item.unit_type} de{' '}
+                          {item.item_name}
+                        </p>
+                      </div>
                     </div>
-                  ) : canRegister ? (
-                    <Button
-                      onClick={() => handleAssumeItem(item.id)}
-                      disabled={!cpf || !name || mutation.isPending}
-                      className="w-full sm:w-auto"
-                    >
-                      {mutation.isPending && selectedItemId === item.id
-                        ? 'Registrando...'
-                        : 'Assumir este item'}
-                    </Button>
-                  ) : (
-                    <span className="text-sm text-muted-foreground">
-                      Lista encerrada
-                    </span>
-                  )}
-                </div>
-              ))}
+
+                    {item.member_name ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-medium text-muted-foreground">
+                          Reservado por{' '}
+                          <span className="font-bold text-foreground">
+                            {item.member_name}
+                          </span>
+                        </span>
+
+                        {item.member_name === name &&
+                          item.member_cpf === cpf.replace(/\D/g, '') && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleUnregister(item.id)}
+                              disabled={unregisterMutation.isPending}
+                              title="Desfazer reserva"
+                            >
+                              <Undo2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                      </div>
+                    ) : canRegister ? (
+                      <Button
+                        onClick={() => handleAssumeItem(item.id)}
+                        disabled={!cpf || !name || mutation.isPending}
+                        className="w-full sm:w-auto"
+                      >
+                        {mutation.isPending && selectedItemId === item.id
+                          ? 'Registrando...'
+                          : 'Assumir este item'}
+                      </Button>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">
+                        Lista encerrada
+                      </span>
+                    )}
+                  </div>
+                ))}
               </CardContent>
             </Card>
 

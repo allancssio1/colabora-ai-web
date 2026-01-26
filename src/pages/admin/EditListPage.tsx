@@ -273,7 +273,8 @@ export function EditListPage() {
   const toggleStatusMutation = useMutation({
     mutationFn: () => listService.toggleListStatus(id!),
     onSuccess: (updatedList) => {
-      const statusText = updatedList.status === 'active' ? 'ativada' : 'desativada'
+      const statusText =
+        updatedList.status === 'active' ? 'ativada' : 'desativada'
       toast.success(`Lista ${statusText} com sucesso!`)
       queryClient.invalidateQueries({ queryKey: ['list', id] })
       queryClient.invalidateQueries({ queryKey: ['lists'] })

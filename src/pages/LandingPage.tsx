@@ -8,6 +8,8 @@ import {
   Clock,
   Shield,
   Zap,
+  Crown,
+  Check,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -72,15 +74,15 @@ export function LandingPage() {
           <div className="flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary" />
-              <span>100% Grátis</span>
+              <span>1 Lista Gratis</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary" />
-              <span>Sem Limite de Listas</span>
+              <span>Planos a partir de R$ 20/mes</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4 text-primary" />
-              <span>Colaboração em Tempo Real</span>
+              <span>Colaboracao em Tempo Real</span>
             </div>
           </div>
         </div>
@@ -239,9 +241,9 @@ export function LandingPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           <div className="bg-card border rounded-lg p-6 text-center hover:shadow-lg transition-shadow">
             <div className="text-4xl mb-3">🎂</div>
-            <h3 className="font-semibold mb-2">Festas de Aniversário</h3>
+            <h3 className="font-semibold mb-2">Festas de Aniversario</h3>
             <p className="text-sm text-muted-foreground">
-              Organize bebidas, comidas e decoração
+              Organize bebidas, comidas e decoracao
             </p>
           </div>
 
@@ -265,22 +267,194 @@ export function LandingPage() {
             <div className="text-4xl mb-3">🎓</div>
             <h3 className="font-semibold mb-2">Formaturas</h3>
             <p className="text-sm text-muted-foreground">
-              Organize contribuições da turma
+              Organize contribuicoes da turma
             </p>
           </div>
         </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section className="container mx-auto px-4 py-20">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            Planos e Precos
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Comece gratis com 1 lista. Precisa de mais? Escolha o plano ideal
+            para voce.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          {/* Free */}
+          <div className="bg-card border rounded-lg p-6 hover:shadow-lg transition-shadow">
+            <div className="text-center mb-6">
+              <div className="h-12 w-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Zap className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-bold mb-1">Gratis</h3>
+              <div className="text-3xl font-black">R$ 0</div>
+              <p className="text-sm text-muted-foreground">para sempre</p>
+            </div>
+            <ul className="space-y-3 mb-6">
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>1 lista simultanea</span>
+              </li>
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>Itens ilimitados</span>
+              </li>
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>Membros ilimitados</span>
+              </li>
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>Compartilhamento via link</span>
+              </li>
+            </ul>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => navigate('/auth')}
+            >
+              Comecar Gratis
+            </Button>
+          </div>
+
+          {/* Basic */}
+          <div className="bg-card border rounded-lg p-6 hover:shadow-lg transition-shadow">
+            <div className="text-center mb-6">
+              <div className="h-12 w-12 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Zap className="h-6 w-6 text-blue-500" />
+              </div>
+              <h3 className="text-xl font-bold mb-1">Basico</h3>
+              <div className="text-3xl font-black">R$ 20</div>
+              <p className="text-sm text-muted-foreground">/mes</p>
+            </div>
+            <ul className="space-y-3 mb-6">
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>
+                  <strong>5 listas</strong> simultaneas
+                </span>
+              </li>
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>Itens ilimitados</span>
+              </li>
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>Membros ilimitados</span>
+              </li>
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>Suporte por email</span>
+              </li>
+            </ul>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => navigate('/auth')}
+            >
+              Assinar Basico
+            </Button>
+          </div>
+
+          {/* Intermediate - Popular */}
+          <div className="bg-card border-2 border-primary rounded-lg p-6 hover:shadow-lg transition-shadow relative">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
+              Popular
+            </div>
+            <div className="text-center mb-6">
+              <div className="h-12 w-12 bg-purple-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Sparkles className="h-6 w-6 text-purple-500" />
+              </div>
+              <h3 className="text-xl font-bold mb-1">Intermediario</h3>
+              <div className="text-3xl font-black">R$ 35</div>
+              <p className="text-sm text-muted-foreground">/mes</p>
+            </div>
+            <ul className="space-y-3 mb-6">
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>
+                  <strong>10 listas</strong> simultaneas
+                </span>
+              </li>
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>Itens ilimitados</span>
+              </li>
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>Membros ilimitados</span>
+              </li>
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>Suporte por email</span>
+              </li>
+            </ul>
+            <Button className="w-full" onClick={() => navigate('/auth')}>
+              Assinar Intermediario
+            </Button>
+          </div>
+
+          {/* Max */}
+          <div className="bg-card border rounded-lg p-6 hover:shadow-lg transition-shadow">
+            <div className="text-center mb-6">
+              <div className="h-12 w-12 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Crown className="h-6 w-6 text-amber-500" />
+              </div>
+              <h3 className="text-xl font-bold mb-1">Max</h3>
+              <div className="text-3xl font-black">R$ 50</div>
+              <p className="text-sm text-muted-foreground">/mes</p>
+            </div>
+            <ul className="space-y-3 mb-6">
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>
+                  <strong>15 listas</strong> simultaneas
+                </span>
+              </li>
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>Itens ilimitados</span>
+              </li>
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>Membros ilimitados</span>
+              </li>
+              <li className="flex items-center gap-2 text-sm">
+                <Check className="h-4 w-4 text-primary shrink-0" />
+                <span>Suporte prioritario</span>
+              </li>
+            </ul>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => navigate('/auth')}
+            >
+              Assinar Max
+            </Button>
+          </div>
+        </div>
+
+        <p className="text-center text-sm text-muted-foreground mt-8">
+          Pagamento seguro via PIX. Renovacao manual mensal.
+        </p>
       </section>
 
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-20">
         <div className="bg-primary rounded-3xl p-12 text-center text-primary-foreground">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Pronto para Organizar seu Próximo Evento?
+            Pronto para Organizar seu Proximo Evento?
           </h2>
           <p className="text-lg mb-8 opacity-90 max-w-2xl mx-auto">
-            Junte-se a centenas de pessoas que já usam o Colabora-AI para
-            organizar eventos incríveis. É grátis e leva menos de 1 minuto para
-            começar!
+            Junte-se a centenas de pessoas que ja usam o Colabora-AI para
+            organizar eventos incriveis. Comece gratis com 1 lista e atualize
+            quando precisar!
           </p>
           <Button
             size="lg"
@@ -288,7 +462,7 @@ export function LandingPage() {
             onClick={() => navigate('/auth')}
             className="text-lg"
           >
-            Criar Minha Conta Grátis
+            Criar Minha Conta Gratis
             <Sparkles className="ml-2 h-5 w-5" />
           </Button>
         </div>

@@ -3,9 +3,11 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { listService } from '@/services/list.service'
+import { subscriptionService } from '@/services/subscription.service'
 import { toastMessages } from '@/utils/toast-messages'
 import { extractErrorMessage } from '@/utils/error-handler'
 import { Header } from '@/components/layout/Header'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import {
@@ -30,7 +32,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Plus, MapPin, Calendar, Edit, Eye, Trash2, Copy } from 'lucide-react'
+import {
+  AlertTriangle,
+  Crown,
+  Plus,
+  MapPin,
+  Calendar,
+  Edit,
+  Eye,
+  Trash2,
+  Copy,
+} from 'lucide-react'
 import { format } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 
@@ -39,13 +51,20 @@ export function MyListsPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [listToDelete, setListToDelete] = useState<string | null>(null)
   const [createModalOpen, setCreateModalOpen] = useState(false)
-  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null)
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
+    null,
+  )
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
   const { data: lists, isLoading } = useQuery({
     queryKey: ['lists'],
     queryFn: listService.getLists,
+  })
+
+  const { data: subscriptionStatus } = useQuery({
+    queryKey: ['subscription-status'],
+    queryFn: subscriptionService.getStatus,
   })
 
   const deleteMutation = useMutation({
@@ -109,11 +128,36 @@ export function MyListsPage() {
       return list.status === filter
     }) ?? []
 
+  const isSubscriptionExpired = subscriptionStatus?.status === 'expired'
+  const canCreateList = subscriptionStatus?.canCreateList ?? false
+  const listsUsed = subscriptionStatus?.listsCount ?? 0
+  const listsLimit = subscriptionStatus?.listsLimit ?? 1
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
 
       <main className="container max-w-7xl mx-auto px-4 md:px-8 py-8">
+        {/* Banner de assinatura expirada */}
+        {isSubscriptionExpired && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Assinatura expirada</AlertTitle>
+            <AlertDescription className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <span>
+                Suas listas estao em modo somente leitura. Renove sua assinatura
+                para continuar editando.
+              </span>
+              <Link to="/subscription/plans">
+                <Button size="sm" variant="outline" className="shrink-0">
+                  <Crown className="h-4 w-4 mr-2" />
+                  Ver planos
+                </Button>
+              </Link>
+            </AlertDescription>
+          </Alert>
+        )}
+
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <div className="flex flex-col gap-2">
             <h1 className="text-3xl md:text-4xl font-black leading-tight tracking-tight text-primary">
@@ -122,19 +166,49 @@ export function MyListsPage() {
             <p className="text-base text-muted-foreground">
               Gerencie seus eventos e contribuições
             </p>
+            {/* Contador de listas */}
+            <p className="text-sm text-muted-foreground">
+              <span
+                className={
+                  listsUsed >= listsLimit ? 'text-destructive font-medium' : ''
+                }
+              >
+                {listsUsed}/{listsLimit}
+              </span>{' '}
+              listas utilizadas
+              {!subscriptionStatus?.plan && listsUsed >= listsLimit && (
+                <Link
+                  to="/subscription/plans"
+                  className="ml-2 text-primary hover:underline"
+                >
+                  Assine para criar mais
+                </Link>
+              )}
+            </p>
           </div>
           {lists && lists.length > 0 ? (
             <Button
               size="lg"
               className="shadow-lg shadow-primary/20"
-              onClick={() => setCreateModalOpen(true)}
+              onClick={() => {
+                if (!canCreateList) {
+                  toast.error('Voce atingiu o limite de listas do seu plano')
+                  return
+                }
+                setCreateModalOpen(true)
+              }}
+              disabled={isSubscriptionExpired}
             >
               <Plus className="h-5 w-5 mr-2" />
               Criar nova lista
             </Button>
           ) : (
             <Link to="/lists/create">
-              <Button size="lg" className="shadow-lg shadow-primary/20">
+              <Button
+                size="lg"
+                className="shadow-lg shadow-primary/20"
+                disabled={isSubscriptionExpired || !canCreateList}
+              >
                 <Plus className="h-5 w-5 mr-2" />
                 Criar nova lista
               </Button>
@@ -218,8 +292,12 @@ export function MyListsPage() {
                               : 'bg-white text-red-700 ring-red-300 dark:bg-red-900/30 dark:text-red-400 dark:ring-red-600/20'
                           }`}
                         >
-                          <span className={`size-1.5 rounded-full ${isEventAvailable(list.event_date) ? 'bg-emerald-600 dark:bg-emerald-400' : 'bg-red-600 dark:bg-red-400'}`} />
-                          {isEventAvailable(list.event_date) ? 'Disponível' : 'Expirada'}
+                          <span
+                            className={`size-1.5 rounded-full ${isEventAvailable(list.event_date) ? 'bg-emerald-600 dark:bg-emerald-400' : 'bg-red-600 dark:bg-red-400'}`}
+                          />
+                          {isEventAvailable(list.event_date)
+                            ? 'Disponível'
+                            : 'Expirada'}
                         </span>
                       )}
                     </div>

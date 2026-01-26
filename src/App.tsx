@@ -13,6 +13,9 @@ import { EditListPage } from '@/pages/admin/EditListPage'
 import { PublicListPage } from '@/pages/public/PublicListPage'
 import { DocsPage } from '@/pages/DocsPage'
 
+import { PlansPage } from '@/pages/subscription/PlansPage'
+import { CheckoutPage } from '@/pages/subscription/CheckoutPage'
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -71,6 +74,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <EditListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/subscription/plans"
+            element={
+              <ProtectedRoute>
+                <PlansPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/subscription/checkout"
+            element={
+              <ProtectedRoute>
+                <CheckoutPage />
               </ProtectedRoute>
             }
           />

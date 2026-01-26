@@ -14,11 +14,12 @@ import {
   Calendar,
   Share2,
   Edit,
-  Trash2,
   Power,
   Copy,
   UserPlus,
   AlertTriangle,
+  Crown,
+  CreditCard,
 } from 'lucide-react'
 
 export function DocsPage() {
@@ -326,6 +327,183 @@ export function DocsPage() {
                       Membros podem cancelar seu registro informando o CPF
                       utilizado no momento do registro.
                     </p>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </CardContent>
+        </Card>
+
+        {/* Planos e Assinatura */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Crown className="h-5 w-5 text-primary" />
+              Planos e Assinatura
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Accordion type="single" collapsible className="w-full">
+              {/* Planos Disponiveis */}
+              <AccordionItem value="plans">
+                <AccordionTrigger className="text-left">
+                  <div className="flex items-center gap-2">
+                    <ListChecks className="h-4 w-4 text-primary" />
+                    Planos Disponiveis
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="space-y-4">
+                  <p className="text-muted-foreground">
+                    O Colabora-AI oferece diferentes planos para atender as suas
+                    necessidades de organizacao de eventos.
+                  </p>
+
+                  <div className="grid gap-3">
+                    <div className="p-3 bg-muted rounded-lg border-l-4 border-muted-foreground">
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-semibold">Gratuito</h4>
+                        <span className="text-sm font-mono">R$ 0,00</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        1 lista ativa - Ideal para experimentar a plataforma
+                      </p>
+                    </div>
+
+                    <div className="p-3 bg-muted rounded-lg border-l-4 border-blue-500">
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-semibold">Basico</h4>
+                        <span className="text-sm font-mono">R$ 20,00/mes</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Ate 5 listas ativas - Para quem organiza eventos
+                        ocasionalmente
+                      </p>
+                    </div>
+
+                    <div className="p-3 bg-muted rounded-lg border-l-4 border-purple-500">
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-semibold">Intermediario</h4>
+                        <span className="text-sm font-mono">R$ 35,00/mes</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Ate 10 listas ativas - Para organizadores frequentes
+                      </p>
+                    </div>
+
+                    <div className="p-3 bg-muted rounded-lg border-l-4 border-amber-500">
+                      <div className="flex justify-between items-center">
+                        <h4 className="font-semibold">Max</h4>
+                        <span className="text-sm font-mono">R$ 50,00/mes</span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Ate 15 listas ativas - Maximo poder para profissionais
+                      </p>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Pagamento */}
+              <AccordionItem value="payment">
+                <AccordionTrigger className="text-left">
+                  <div className="flex items-center gap-2">
+                    <CreditCard className="h-4 w-4 text-primary" />
+                    Pagamento e Renovacao
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="space-y-4">
+                  <div className="space-y-2">
+                    <h4 className="font-semibold">Metodo de Pagamento:</h4>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                      <li>
+                        <strong>PIX:</strong> Pagamento instantaneo e seguro via
+                        QR Code ou codigo copia e cola
+                      </li>
+                      <li>
+                        O pagamento e processado automaticamente e a assinatura
+                        e ativada imediatamente apos a confirmacao
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h4 className="font-semibold">Validade e Renovacao:</h4>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                      <li>
+                        Cada assinatura tem validade de <strong>30 dias</strong>{' '}
+                        a partir da data de pagamento
+                      </li>
+                      <li>
+                        A renovacao e <strong>manual</strong> - voce escolhe
+                        quando renovar
+                      </li>
+                      <li>
+                        Voce pode renovar antes do vencimento para manter o
+                        acesso ininterrupto
+                      </li>
+                      <li>
+                        Ao expirar, sua assinatura retorna ao plano gratuito (1
+                        lista)
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h4 className="font-semibold flex items-center gap-2 text-amber-600">
+                      <AlertTriangle className="h-4 w-4" />
+                      Importante:
+                    </h4>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                      <li>
+                        Se sua assinatura expirar e voce tiver mais listas que o
+                        limite gratuito, suas listas serao preservadas mas voce
+                        nao podera criar novas ate renovar
+                      </li>
+                      <li>
+                        O QR Code do PIX tem validade limitada - finalize o
+                        pagamento antes de expirar
+                      </li>
+                    </ul>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Limites */}
+              <AccordionItem value="limits">
+                <AccordionTrigger className="text-left">
+                  <div className="flex items-center gap-2">
+                    <Shield className="h-4 w-4 text-primary" />
+                    Limites e Recursos
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="space-y-4">
+                  <p className="text-muted-foreground">
+                    Cada plano define o numero maximo de listas ativas que voce
+                    pode ter simultaneamente.
+                  </p>
+
+                  <div className="space-y-2">
+                    <h4 className="font-semibold">O que conta como lista ativa:</h4>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                      <li>
+                        Todas as listas criadas, independente do status
+                        (ativa/arquivada)
+                      </li>
+                      <li>
+                        Ao deletar uma lista, o espaco e liberado imediatamente
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h4 className="font-semibold">Recursos inclusos em todos os planos:</h4>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                      <li>Itens ilimitados por lista</li>
+                      <li>Membros ilimitados por item</li>
+                      <li>Compartilhamento publico de listas</li>
+                      <li>Criacao a partir de modelo</li>
+                      <li>Suporte completo</li>
+                    </ul>
                   </div>
                 </AccordionContent>
               </AccordionItem>

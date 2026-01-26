@@ -78,7 +78,8 @@ export function ListDetailsPage() {
 
   const copyLink = () => {
     const url = `${window.location.origin}/lists/${id}/public`
-    navigator.clipboard.writeText(url)
+    navigator.clipboard
+      .writeText(url)
       .then(() => {
         toast.success(toastMessages.list.copySuccess)
       })
@@ -89,7 +90,7 @@ export function ListDetailsPage() {
 
   const handleDownloadList = () => {
     toast.info('Funcionalidade em desenvolvimento', {
-      description: 'O download em PDF/DOCX será implementado em breve.'
+      description: 'O download em PDF/DOCX será implementado em breve.',
     })
   }
 
@@ -126,19 +127,31 @@ export function ListDetailsPage() {
   ).size
 
   // Group items by name to calculate progress
-  const groupedItems = list.items.reduce((acc, item) => {
-    if (!acc[item.item_name]) {
-      acc[item.item_name] = {
-        name: item.item_name,
-        unit: item.unit_type,
-        quantityPerMember: item.quantity_per_portion,
-        totalQuantity: item.quantity_total,
-        items: [],
+  const groupedItems = list.items.reduce(
+    (acc, item) => {
+      if (!acc[item.item_name]) {
+        acc[item.item_name] = {
+          name: item.item_name,
+          unit: item.unit_type,
+          quantityPerMember: item.quantity_per_portion,
+          totalQuantity: item.quantity_total,
+          items: [],
+        }
       }
-    }
-    acc[item.item_name].items.push(item)
-    return acc
-  }, {} as Record<string, { name: string; unit: string; quantityPerMember: number; totalQuantity: number; items: typeof list.items }>)
+      acc[item.item_name].items.push(item)
+      return acc
+    },
+    {} as Record<
+      string,
+      {
+        name: string
+        unit: string
+        quantityPerMember: number
+        totalQuantity: number
+        items: typeof list.items
+      }
+    >,
+  )
 
   const itemsSummary = Object.values(groupedItems).map((group) => ({
     name: group.name,
@@ -482,8 +495,8 @@ export function ListDetailsPage() {
                                 item.progress === 100
                                   ? 'bg-green-500'
                                   : item.progress > 0
-                                  ? 'bg-blue-500'
-                                  : 'bg-gray-300'
+                                    ? 'bg-blue-500'
+                                    : 'bg-gray-300'
                               }`}
                               style={{ width: `${item.progress}%` }}
                             />
