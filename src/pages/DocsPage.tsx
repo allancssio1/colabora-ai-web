@@ -20,6 +20,7 @@ import {
   AlertTriangle,
   Crown,
   CreditCard,
+  ArrowDownUp,
 } from 'lucide-react'
 
 export function DocsPage() {
@@ -423,6 +424,10 @@ export function DocsPage() {
                         O pagamento e processado automaticamente e a assinatura
                         e ativada imediatamente apos a confirmacao
                       </li>
+                      <li>
+                        <strong>CPF e telefone</strong> sao obrigatorios para
+                        realizar o pagamento via PIX
+                      </li>
                     </ul>
                   </div>
 
@@ -438,8 +443,9 @@ export function DocsPage() {
                         quando renovar
                       </li>
                       <li>
-                        Voce pode renovar antes do vencimento para manter o
-                        acesso ininterrupto
+                        Nao e possivel trocar de plano enquanto a assinatura
+                        atual estiver ativa - aguarde a expiracao para renovar
+                        ou mudar de plano
                       </li>
                       <li>
                         Ao expirar, sua assinatura retorna ao plano gratuito (1
@@ -460,8 +466,9 @@ export function DocsPage() {
                         nao podera criar novas ate renovar
                       </li>
                       <li>
-                        O QR Code do PIX tem validade limitada - finalize o
-                        pagamento antes de expirar
+                        O QR Code do PIX tem validade de{' '}
+                        <strong>1 hora</strong> - finalize o pagamento antes de
+                        expirar
                       </li>
                     </ul>
                   </div>
@@ -483,11 +490,15 @@ export function DocsPage() {
                   </p>
 
                   <div className="space-y-2">
-                    <h4 className="font-semibold">O que conta como lista ativa:</h4>
+                    <h4 className="font-semibold">O que conta para o limite do plano:</h4>
                     <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
                       <li>
-                        Todas as listas criadas, independente do status
-                        (ativa/arquivada)
+                        Apenas listas com status <strong>ativo</strong> contam
+                        para o limite do plano
+                      </li>
+                      <li>
+                        Listas arquivadas nao contam para o limite e podem ser
+                        reativadas desde que haja espaco no plano
                       </li>
                       <li>
                         Ao deletar uma lista, o espaco e liberado imediatamente
@@ -504,6 +515,63 @@ export function DocsPage() {
                       <li>Criacao a partir de modelo</li>
                       <li>Suporte completo</li>
                     </ul>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+
+              {/* Mudanca de Plano */}
+              <AccordionItem value="plan-change">
+                <AccordionTrigger className="text-left">
+                  <div className="flex items-center gap-2">
+                    <ArrowDownUp className="h-4 w-4 text-primary" />
+                    Mudanca de Plano (Upgrade e Downgrade)
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="space-y-4">
+                  <p className="text-muted-foreground">
+                    Voce so pode mudar de plano apos a assinatura atual
+                    expirar. Ao renovar, voce pode escolher qualquer plano
+                    disponivel.
+                  </p>
+
+                  <div className="space-y-2">
+                    <h4 className="font-semibold">Upgrade (plano superior):</h4>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                      <li>
+                        Suas listas ativas permanecem normalmente
+                      </li>
+                      <li>
+                        O novo limite de listas e aplicado imediatamente
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="space-y-2">
+                    <h4 className="font-semibold flex items-center gap-2 text-amber-600">
+                      <AlertTriangle className="h-4 w-4" />
+                      Downgrade (plano inferior):
+                    </h4>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                      <li>
+                        <strong>Todas as suas listas ativas serao
+                        automaticamente arquivadas</strong>
+                      </li>
+                      <li>
+                        Voce devera reativar manualmente as listas que deseja,
+                        respeitando o limite do novo plano
+                      </li>
+                      <li>
+                        Nenhuma lista e deletada - elas ficam preservadas como
+                        arquivadas
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="p-3 bg-muted rounded-lg text-sm text-muted-foreground">
+                    <strong>Exemplo:</strong> Se voce tinha o plano Max (15
+                    listas) e renova com o plano Basico (5 listas), todas as
+                    suas listas serao arquivadas. Voce podera reativar ate 5
+                    delas.
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -562,8 +630,12 @@ export function DocsPage() {
                       registros, independente da data
                     </li>
                     <li>
-                      O status pode ser alterado a qualquer momento pelo dono da
-                      lista
+                      Arquivar uma lista pode ser feito a qualquer momento
+                    </li>
+                    <li>
+                      Reativar uma lista arquivada depende do limite de listas
+                      ativas do seu plano atual - se o limite ja foi atingido,
+                      a reativacao sera bloqueada
                     </li>
                   </ul>
                 </AccordionContent>
@@ -694,6 +766,14 @@ export function DocsPage() {
                         Cancelar registro de membro
                       </p>
                     </div>
+                    <div className="p-3 bg-muted rounded-lg">
+                      <code className="text-sm font-mono">
+                        GET /subscription/plans
+                      </code>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Listar planos de assinatura disponiveis
+                      </p>
+                    </div>
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -750,6 +830,30 @@ export function DocsPage() {
                         Deletar lista e todos os seus itens
                       </p>
                     </div>
+                    <div className="p-3 bg-muted rounded-lg">
+                      <code className="text-sm font-mono">
+                        GET /subscription/status
+                      </code>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Verificar status da assinatura do usuario
+                      </p>
+                    </div>
+                    <div className="p-3 bg-muted rounded-lg">
+                      <code className="text-sm font-mono">
+                        POST /subscription/checkout
+                      </code>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Criar checkout PIX para assinatura (body: plan)
+                      </p>
+                    </div>
+                    <div className="p-3 bg-muted rounded-lg">
+                      <code className="text-sm font-mono">
+                        GET /subscription/payment/:transactionId
+                      </code>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Verificar status do pagamento PIX
+                      </p>
+                    </div>
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -766,7 +870,8 @@ export function DocsPage() {
                         POST /auth/register
                       </code>
                       <p className="text-sm text-muted-foreground mt-1">
-                        Criar nova conta (body: name, email, password)
+                        Criar nova conta (body: name, email, password, cpf?,
+                        phone?)
                       </p>
                     </div>
                     <div className="p-3 bg-muted rounded-lg">
