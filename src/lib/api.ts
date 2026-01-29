@@ -24,7 +24,10 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
-      window.location.href = '/auth'
+      // Só redireciona se NÃO estiver na página de auth
+      if (!window.location.pathname.startsWith('/auth')) {
+        window.location.href = '/auth'
+      }
     }
     return Promise.reject(error)
   }

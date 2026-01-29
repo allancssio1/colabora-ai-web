@@ -17,7 +17,7 @@ import { extractErrorMessage } from '@/utils/error-handler'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Eye, EyeOff, Mail, Lock, User, CreditCard } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, User, CreditCard, Phone } from 'lucide-react'
 import { AppLogo } from '@/components/ui/app-logo'
 
 export function AuthPage() {
@@ -44,6 +44,7 @@ export function AuthPage() {
       navigate('/my-lists')
     },
     onError: (error) => {
+      console.log('🚀 ~ AuthPage ~ error:', error)
       toast.error(extractErrorMessage(error, toastMessages.auth.loginError))
     },
   })
@@ -223,8 +224,50 @@ export function AuthPage() {
                       {errors.cpf.message}
                     </p>
                   )}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Telefone</Label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                      <Phone className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="(00) 00000-0000"
+                      className="pl-10"
+                      maxLength={15}
+                      {...register('phone', {
+                        onChange: (e) => {
+                          let value = e.target.value.replace(/\D/g, '')
+                          if (value.length > 11) value = value.slice(0, 11)
+                          if (value.length > 10) {
+                            value = value.replace(
+                              /(\d{2})(\d{5})(\d{4})/,
+                              '($1) $2-$3',
+                            )
+                          } else if (value.length > 6) {
+                            value = value.replace(
+                              /(\d{2})(\d{4,5})(\d{0,4})/,
+                              '($1) $2-$3',
+                            )
+                          } else if (value.length > 2) {
+                            value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2')
+                          }
+                          e.target.value = value
+                        },
+                        setValueAs: (value: string) => value.replace(/\D/g, ''),
+                      })}
+                    />
+                  </div>
+                  {'phone' in errors && errors.phone && (
+                    <p className="text-sm text-destructive">
+                      {errors.phone.message}
+                    </p>
+                  )}
                   <p className="text-xs text-muted-foreground mt-1">
-                    Necessário para pagamentos via PIX.
+                    CPF e telefone sao necessarios para pagamentos via PIX.
                   </p>
                 </div>
               </>
